@@ -1,14 +1,8 @@
 <?php
+namespace Musika;
 
-/**
- * MINI - an extremely simple naked PHP application
- *
- * @package mini
- * @author Panique
- * @link http://www.php-mini.com
- * @link https://github.com/panique/mini/
- * @license http://opensource.org/licenses/MIT MIT License
- */
+use Musika\core\Application;
+
 
 // TODO get rid of this and work with namespaces + composer's autoloader
 
@@ -17,6 +11,11 @@
 define('ROOT', dirname(__DIR__) . DIRECTORY_SEPARATOR);
 // set a constant that holds the project's "application" folder, like "/var/www/application".
 define('APP', ROOT . 'application' . DIRECTORY_SEPARATOR);
+// set a constant that holds the project's "application" folder, like "/var/www/application".
+define('APPNAME', 'MUSIKA_FHNU');
+
+// set a constant that holds the project's "application" folder, like "/var/www/application".
+define('DS', DIRECTORY_SEPARATOR);
 
 // This is the (totally optional) auto-loader for Composer-dependencies (to load tools into your project).
 // If you have no idea what this means: Don't worry, you don't need it, simply leave it like it is.
@@ -34,6 +33,8 @@ require APP . '/libs/helper.php';
 // load application class
 require APP . '/core/application.php';
 require APP . '/core/controller.php';
+require APP . '/core/view.php';
+require APP . '/model/model.php';
 
 // start the application
 $app = new Application();
