@@ -8,7 +8,7 @@
 
 use Musika\core\Controller;
 
-// TODO: Create the table roles, authentication, and user table
+// TODO: Create the table roles, authentication, and users table
 // TODO: Create User login and profile view
 
 

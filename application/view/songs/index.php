@@ -37,6 +37,7 @@
             </tr>
             </thead>
             <tbody>
+
             <?php foreach ($songs as $song) { ?>
                 <tr>
                     <td><?php if (isset($song->id)) echo htmlspecialchars($song->id, ENT_QUOTES, 'UTF-8'); ?></td>
