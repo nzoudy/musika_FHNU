@@ -1,7 +1,7 @@
 <?php
 
 use Musika\core\Controller;
-use Musika\core\View;
+
 /**
  * Class Home
  *

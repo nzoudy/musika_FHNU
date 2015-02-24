@@ -19,9 +19,18 @@ class Model
     /**
      * Get all songs from database
      */
-    public function getAllSongs()
+    public function getAll($table, $cols=null)
     {
-        $sql = "SELECT id, artist, track, link FROM song";
+       // $sql = "SELECT id, artist, track, link FROM {$table}";
+        if(is_array($cols)){
+            $strcols =  implode(",", $cols);
+            $sql = "SELECT {$strcols} FROM {$table}";
+
+        }elseif(!is_array($cols) && $cols!= null){
+            $sql = "SELECT {$cols} FROM {$table}";
+        }else{
+            $sql = "SELECT  *  FROM {$table}";
+        }
         $query = $this->db->prepare($sql);
         $query->execute();
 
@@ -119,9 +128,9 @@ class Model
      * Get simple "stats". This is just a simple demo to show
      * how to use more than one model in a controller (see application/controller/SongsController.php for more)
      */
-    public function getAmountOfSongs()
+    public function getAmount($table)
     {
-        $sql = "SELECT COUNT(id) AS amount_of_songs FROM song";
+        $sql = "SELECT COUNT(id) AS amount_of_songs FROM {$table}";
         $query = $this->db->prepare($sql);
         $query->execute();
 

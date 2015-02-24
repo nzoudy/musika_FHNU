@@ -8,7 +8,6 @@
 
 namespace Musika\model;
 
-
 class Song {
     private $title;
     private $userid; // Foreign Key
@@ -16,7 +15,6 @@ class Song {
     private $type; // Audio or Video
     private $gender; // RnB, Makossa, Rock, Techno
     private $created;
-
 
     /**
      * @return mixed
