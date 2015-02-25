@@ -19,7 +19,7 @@ class Home extends Controller
     public function index()
     {
         // set page title
-         $this->view->title = "Home";
+         $this->view->title = "From Nzouda";
         // load views
         $this->view->render('index.php');
 
