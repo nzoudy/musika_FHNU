@@ -52,7 +52,7 @@ class Model
      * @param string $track Track
      * @param string $link Link
      */
-    public function addSong($artist, $track, $link)
+    public function add($artist, $track, $link)
     {
         $sql = "INSERT INTO song (artist, track, link) VALUES (:artist, :track, :link)";
         $query = $this->db->prepare($sql);
@@ -70,7 +70,7 @@ class Model
      * add/update/delete stuff!
      * @param int $song_id Id of song
      */
-    public function deleteSong($song_id)
+    public function delete($song_id)
     {
         $sql = "DELETE FROM song WHERE id = :song_id";
         $query = $this->db->prepare($sql);
@@ -85,7 +85,7 @@ class Model
     /**
      * Get a song from database
      */
-    public function getSong($song_id)
+    public function get($song_id)
     {
         $sql = "SELECT id, artist, track, link FROM song WHERE id = :song_id LIMIT 1";
         $query = $this->db->prepare($sql);
@@ -112,7 +112,7 @@ class Model
      * @param string $link Link
      * @param int $song_id Id
      */
-    public function updateSong($artist, $track, $link, $song_id)
+    public function update($artist, $track, $link, $song_id)
     {
         $sql = "UPDATE song SET artist = :artist, track = :track, link = :link WHERE id = :song_id";
         $query = $this->db->prepare($sql);
@@ -130,11 +130,11 @@ class Model
      */
     public function getAmount($table)
     {
-        $sql = "SELECT COUNT(id) AS amount_of_songs FROM {$table}";
+        $sql = "SELECT COUNT(id) AS amount FROM {$table}";
         $query = $this->db->prepare($sql);
         $query->execute();
 
         // fetch() is the PDO method that get exactly one result
-        return $query->fetch()->amount_of_songs;
+        return $query->fetch()->amount;
     }
 }

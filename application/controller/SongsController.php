@@ -1,6 +1,8 @@
 <?php
+require_once(APP.DS.'model'.DS.'Song.php');
 
 use Musika\core\Controller;
+use Musika\model\Song;
 
 /**
  * Class Songs
@@ -22,12 +24,14 @@ class Songs extends Controller
         // set page title
         $this->view->title = "Songs";
         // getting all songs and amount of songs
-        $this->view->songs = $this->model->getAll('song', array('id', 'artist', 'track', 'link'));
-        $this->view->amount_of_songs = $this->model->getAmount('song');
+        //$this->view->songs = $this->model->getAll('song', array('id', 'artist', 'track', 'link'));
+        //$this->view->amount_of_songs = $this->model->getAmount('song');
 
-        var_dump($this->model->getAll('song',array('id', 'artist') ));
+        $songModel = new Song($this->db);
 
-        die;
+        // getting all songs and amount of songs
+        $this->view->songs = $songModel->getAllSongs();
+        $this->view->amount_of_songs = $songModel->getAmountOfSong();
 
         // load views. within the views we can echo out $songs and $amount_of_songs easily
         $this->view->render('index.php');
