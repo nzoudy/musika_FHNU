@@ -147,7 +147,7 @@ class Song extends model {
         if(!$songs || count($songs)== 0)
             return false;
 
-        return null; // return array of Song objects
+        return $songs; // return array of Song objects
     }
 
 
@@ -166,7 +166,7 @@ class Song extends model {
 
     }
 
-    public function deleteSong($song_id){
+    public function delete($song_id){
 
     }
 
