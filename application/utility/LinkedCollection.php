@@ -9,6 +9,15 @@
 namespace Utility;
 
 
-class LinkedCollection {
-
+class LinkedCollection extends Collection
+{
+    /**
+     * Takes the reference of an array
+     *
+     * @param array $info
+     */
+    public function __construct(array &$info = array())
+    {
+        $this->_data =& $info;
+    }
 }

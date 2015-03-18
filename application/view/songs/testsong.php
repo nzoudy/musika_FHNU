@@ -1,7 +1,3 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: hermann
- * Date: 19/03/15
- * Time: 00:27
- */
+<div class="container">
+    <h2>From the view songs, controller : 'songs', and actions 'testsong' </h2>
+</div>
