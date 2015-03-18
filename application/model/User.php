@@ -8,6 +8,7 @@
 
 namespace Musika\model;
 
+use Musika\core\Model;
 
 class User extends Model {
     private $firstName;
@@ -219,7 +220,5 @@ class User extends Model {
     // return list de song de cette utilisateur
 
     // 1 to N add new users
-
-
 
 }

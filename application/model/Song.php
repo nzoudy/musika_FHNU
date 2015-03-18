@@ -8,6 +8,8 @@
 
 namespace Musika\model;
 
+use Musika\core\Model;
+
 class Song extends model {
     private $title;
     private $userid; // Foreign Key

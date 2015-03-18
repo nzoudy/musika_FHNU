@@ -54,5 +54,7 @@
             <?php } ?>
             </tbody>
         </table>
+
+        <a href="<?php echo URL . 'songs/testsong/'?>">test song page </a>
     </div>
 </div>

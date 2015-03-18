@@ -1,5 +1,5 @@
 <?php
-require_once(APP.DS.'model'.DS.'Song.php');
+//require_once(APP.DS.'model'.DS.'Song.php');
 
 use Musika\core\Controller;
 use Musika\model\Song;
@@ -133,6 +133,13 @@ class Songs extends Controller
 
         // simply echo out something. A supersimple API would be possible by echoing JSON here
         echo $amount_of_songs;
+    }
+
+    public function testsong()
+    {
+        $this->view->title = "TEST";
+        // load views
+        $this->view->render('testsong.php');
     }
 
 }

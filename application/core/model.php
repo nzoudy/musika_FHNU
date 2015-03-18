@@ -1,5 +1,5 @@
 <?php
-namespace Musika\model;
+namespace Musika\core;
 
 
 class Model

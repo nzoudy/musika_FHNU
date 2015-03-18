@@ -12,6 +12,15 @@ use Musika\core\Controller;
 // TODO: Create User login and profile view
 
 
-class UserController  extends Controller{
+class Users  extends Controller{
+
+    public function index()
+    {
+        // set page title
+        $this->view->title = "Profile";
+        // load views
+        $this->view->render('register.php');
+
+    }
 
 }

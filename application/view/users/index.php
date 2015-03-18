@@ -1,7 +1,5 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: hermann
- * Date: 06/02/15
- * Time: 01:02
- */
+<div class="container">
+    <div class="row">
+        user index, and user name
+    </div>
+</div>

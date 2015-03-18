@@ -28,13 +28,34 @@ require APP . '/config/config.php';
 
 // FOR DEVELOPMENT: this loads PDO-debug, a simple function that shows the SQL query (when using PDO).
 // If you want to load pdoDebug via Composer, then have a look here: https://github.com/panique/pdo-debug
-require APP . '/libs/helper.php';
+foreach (glob(APP ."/libs/*.php") as $filename)
+{
+    require $filename;
+}
+
 
 // load application class
-require APP . '/core/application.php';
-require APP . '/core/controller.php';
-require APP . '/core/view.php';
-require APP . '/model/model.php';
+//require APP . '/core/application.php';
+//require APP . '/core/controller.php';
+//require APP . '/core/view.php';
+
+// load core files
+foreach (glob(APP ."/core/*.php") as $filename)
+{
+    require $filename;
+}
+
+// load core files
+foreach (glob(APP ."/model/*.php") as $filename)
+{
+    require $filename;
+}
+
+// load Utility files
+foreach (glob(APP ."/utility/*.php") as $filename)
+{
+    require $filename;
+}
 
 // start the application
 $app = new Application();

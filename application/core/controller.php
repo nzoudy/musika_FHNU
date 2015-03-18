@@ -2,7 +2,6 @@
 
 namespace Musika\core;
 
-use Musika\model\Model;
 use Musika\core\View;
 
 
