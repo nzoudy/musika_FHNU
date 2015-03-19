@@ -19,11 +19,16 @@ class Users  extends Controller{
         // set page title
         $this->view->title = "Profile";
         // load views
-        $this->view->render('register.php');
+        $this->view->render('login.php');
 
     }
 
     public function register(){
+
+        echo $_POST;
+
+    }
+    public function login(){
 
         echo $_POST;
 
