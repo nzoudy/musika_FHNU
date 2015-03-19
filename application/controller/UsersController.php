@@ -23,4 +23,10 @@ class Users  extends Controller{
 
     }
 
+    public function register(){
+
+        echo $_POST;
+
+    }
+
 }

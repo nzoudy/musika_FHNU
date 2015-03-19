@@ -221,4 +221,121 @@ class User extends Model {
 
     // 1 to N add new users
 
+
+    /**
+     * Register A New User
+     * Takes two parameters, the first being required
+     *
+     * @access public
+     * @api
+     *
+     * @param array|Collection $info       An associative array, the index being the field name(column in database)and the value
+     *                                     its content(value)
+     * @param bool             $activation Default is false, if true the user will need required further steps to activate account
+     *                                     Otherwise the account will be activated if registration succeeds
+     *
+     * @return string|bool Returns activation hash if second parameter $activation is true
+     *                        Returns true if second parameter $activation is false
+     *                        Returns false on Error
+     */
+    public function register($info, $activation = false)
+    {
+        $this->log->channel('registration'); //Index for Errors and Reports
+
+        /*
+         * Prevent a signed user from registering a new user
+         * NOTE: If a signed user needs to register a new user
+         * clone the signed user object a register the new user
+         * with the clone.
+         */
+        if ($this->isSigned()) {
+            $this->log->error(15);
+            return false;
+        }
+
+        //Saves Registration Data in Class
+        $this->_updates = $info = $this->toCollection($info);
+
+        //Validate All Fields
+        if (!$this->validateAll(true)) {
+            return false;
+        } //There are validations error
+
+        //Set Registration Date
+        $info->RegDate = time();
+
+        /*
+         * Built in actions for special fields
+         */
+
+        //Hash Password
+        if ($info->Password) {
+            $info->Password = $this->hash->generateUserPassword($this, $info->Password);
+        }
+
+        //Check for Email in database
+        if ($info->Email) {
+            if ($this->table->isUnique('Email', $info->Email, 16)) {
+                return false;
+            }
+        }
+
+        //Check for Username in database
+        if ($info->Username) {
+            if ($this->table->isUnique('Username', $info->Username, 17)) {
+                return false;
+            }
+        }
+
+        //Check for errors
+        if ($this->log->hasError()) {
+            return false;
+        }
+
+        //User Activation
+        if (!$activation) {
+            //Activates user upon registration
+            $info->Activated = 1;
+        }
+
+        //Prepare Info for SQL Insertion
+        $data = array();
+        $into = array();
+        foreach ($info->toArray() as $index => $val) {
+            if (!preg_match("/2$/", $index)) { //Skips double fields
+                $into[] = $index;
+                //For the statement
+                $data[$index] = $val;
+            }
+        }
+
+        // Construct the fields
+        $intoStr = implode(', ', $into);
+        $values = ':' . implode(', :', $into);
+
+        //Prepare New User Query
+        $sql = "INSERT INTO _table_ ({$intoStr})
+                VALUES({$values})";
+
+        //Enter New user to Database
+        if ($this->table->runQuery($sql, $data)) {
+            $this->log->report('New User has been registered');
+            // Update the new ID internally
+            $this->_data['ID'] = $info->ID = $this->table->getLastInsertedID();
+            if ($activation) {
+                // Generate a user specific hash
+                $info->Confirmation = $this->hash->generate($info->ID);
+                // Update the newly created user with the confirmation hash
+                $this->update(array('Confirmation' => $info->Confirmation));
+                // Return the confirmation hash
+                return $info->Confirmation;
+            } else {
+                return true;
+            }
+        } else {
+            $this->log->error(1);
+            return false;
+        }
+    }
+
 }
