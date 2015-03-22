@@ -18,7 +18,7 @@
 <body>
     <!-- logo -->
     <div class="logo">
-        MINI
+       Musika
     </div>
 
     <!-- navigation -->

@@ -1,5 +1,5 @@
 <div class="container">
     <div class="row">
-        user index, and user name
+        user index, you are login
     </div>
 </div>

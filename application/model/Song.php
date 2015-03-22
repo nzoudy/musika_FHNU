@@ -164,8 +164,6 @@ class Song extends model {
 
     public function save(){
 
-
-
     }
 
     public function delete($song_id){

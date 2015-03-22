@@ -9,8 +9,12 @@
 namespace Musika\model;
 
 use Musika\core\Model;
+use Utility\form_validation;
+use Utility\Hash;
+use Utility\Session;
 
 class User extends Model {
+    private $userName;
     private $firstName;
     private $lastName;
     private $userId;
@@ -24,10 +28,72 @@ class User extends Model {
     private $created;
     private $updated;
 
-    function __construct()
+    /** @var Collection - Class configuration options */
+    public $config = array(
+        'cookieTime'      => '30',
+        'cookieName'      => 'auto',
+        'cookiePath'      => '/',
+        'cookieHost'      => false,
+        'userSession'     => 'userData',
+    );
+
+    /** @var  Hash - Use to generate hashes */
+    protected $hash;
+    /** @var array - The user information object */
+    protected $_data;
+    /** @var Collection - Updates for the user information object */
+    protected $_updates;
+    /** @var  Session - The namespace session object */
+    public $session;
+
+    /** @var Collection - default field validations */
+    protected $_validations = array(
+        'Username' => array(
+            'limit' => '3-15',
+            'regEx' => '/^([a-zA-Z0-9_])+$/'
+        ),
+        'Firstname' => array(
+            'limit' => '3-15',
+            'regEx' => '/^([a-zA-Z0-9_])+$/'
+        ),
+        'Lastname' => array(
+            'limit' => '3-15',
+            'regEx' => '/^([a-zA-Z0-9_])+$/'
+        ),
+        'Country' => array(
+            'limit' => '3-15',
+            'regEx' => '/^([a-zA-Z ])+$/'
+        ),
+
+        'city' => array(
+            'limit' => '3-15',
+            'regEx' => '/^([a-zA-Z0-9_ ])+$/'
+        ),
+        'zipcode' => array(
+            'limit' => '2-8',
+            'regEx' => '/^([0-9])+$/'
+        ),
+
+        'Password' => array(
+            'limit' => '3-15',
+            'regEx' => ''
+        ),
+        'Email'    => array(
+            'limit' => '4-45',
+            'regEx' => '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,63})$/i'
+        )
+    );
+
+    function __construct($db)
     {
+        parent::__construct($db);
+
         // Instantiate the hash generator
         $this->hash = new Hash();
+        $this->form_validation =  new form_validation();
+
+        // Instantiate the session
+        $this->session = new Session($this->config['userSession']);
     }
 
 
@@ -224,10 +290,6 @@ class User extends Model {
         $this->updated = $updated;
     }
 
-    // return list de song de cette utilisateur
-
-    // 1 to N add new users
-
     /**
      * Check if a user currently signed-in
      *
@@ -256,7 +318,8 @@ class User extends Model {
      */
     public function register($info, $activation = false)
     {
-       // $this->log->channel('registration'); //Index for Errors and Reports
+
+        // $this->log->channel('registration'); //Index for Errors and Reports
 
         /*
          * Prevent a signed user from registering a new user
@@ -264,94 +327,172 @@ class User extends Model {
          * clone the signed user object a register the new user
          * with the clone.
          */
-        if ($this->isSigned()) {
+       /* if ($this->isSigned()) {
             // $this->log->error(15);
             return false;
-        }
+        }*/
 
-        //Saves Registration Data in Class
-        $this->_updates = $info = $this->toCollection($info);
+
+       // Saves Registration Data in Class
+         $this->updateInfo($info);
 
         //Validate All Fields
-        if (!$this->validateAll(true)) {
+        if (!$this->validateAll()) {
             return false;
         } //There are validations error
 
         //Set Registration Date
-        $info->RegDate = time();
+        $this->created = time();
 
         /*
          * Built in actions for special fields
          */
 
-        //Hash Password
-        if ($info->Password) {
-            $info->Password = $this->hash->generateUserPassword($this, $info->Password);
+        //Hash Password , always use generate -> false
+        if ($this->password) {
+            $this->password = $this->hash->generateUserPassword($this, $this->password);
         }
 
+
+        // Todo: // create a function to avoid duplicate email and username
         //Check for Email in database
-        if ($info->Email) {
-            if ($this->table->isUnique('Email', $info->Email, 16)) {
+     /*   if($this->email){
+            if($this->isUnique('user', $this->email, 'email')){
                 return false;
             }
-        }
+        }*/
+
 
         //Check for Username in database
-        if ($info->Username) {
-            if ($this->table->isUnique('Username', $info->Username, 17)) {
+      /*  if ($this->userName) {
+            if ($this->isUnique('user', $this->userName, 'username')) {
                 return false;
             }
-        }
+        }*/
 
-        //Check for errors
-        if ($this->log->hasError()) {
-            return false;
-        }
 
         //User Activation
         if (!$activation) {
             //Activates user upon registration
-            $info->Activated = 1;
+            $this->Activated = 1;
         }
 
-        //Prepare Info for SQL Insertion
         $data = array();
-        $into = array();
-        foreach ($info->toArray() as $index => $val) {
-            if (!preg_match("/2$/", $index)) { //Skips double fields
-                $into[] = $index;
-                //For the statement
-                $data[$index] = $val;
-            }
-        }
+        $data['username'] = $this->userName;
+        $data['firstname'] = $this->fistName;
+        $data['lastname'] = $this->lastName;
+        $data['email'] = $this->email;
+        $data['password'] = $this->password;
+        $data['telephone'] = $this->telephone;
+        $data['address'] = $this->address;
 
-        // Construct the fields
-        $intoStr = implode(', ', $into);
-        $values = ':' . implode(', :', $into);
+        $data['city'] = $this->city;
+        $data['zipcode'] = $this->zipcode;
+        $data['country'] = $this->country;
 
-        //Prepare New User Query
-        $sql = "INSERT INTO _table_ ({$intoStr})
-                VALUES({$values})";
+        $data['created'] = $this->created;
+        $data['updated'] = $this->updated;
 
-        //Enter New user to Database
-        if ($this->table->runQuery($sql, $data)) {
-            $this->log->report('New User has been registered');
-            // Update the new ID internally
-            $this->_data['ID'] = $info->ID = $this->table->getLastInsertedID();
-            if ($activation) {
-                // Generate a user specific hash
-                $info->Confirmation = $this->hash->generate($info->ID);
-                // Update the newly created user with the confirmation hash
-                $this->update(array('Confirmation' => $info->Confirmation));
-                // Return the confirmation hash
-                return $info->Confirmation;
-            } else {
-                return true;
-            }
-        } else {
-            $this->log->error(1);
+        if ($this->addUser('user', $data)){
+            // Set the new user ID by getting the last userid
+            $this->userId = $this->getLastId('user')->id;
+            // created a new session
+            $this->session->data = md5( $this->userId.$this->email);
+
+            print_r($this->session->data);
+            die;
+            // set the session signed
+            $this->session->signed = true;
+            return true;
+        }else {
             return false;
         }
+    }
+
+    protected  function updateInfo($info){
+        $this->userName = trim($this->form_validation->mysql_prep($info['username']));
+        $this->fistName = trim($this->form_validation->mysql_prep($info['first_name']));
+        $this->lastName = trim($this->form_validation->mysql_prep($info['last_name']));
+
+        $this->email = trim($info['email']);
+        $this->password = trim($info['password']);
+        $this->telephone = trim($info['telephone']);
+
+        $this->address = trim($this->form_validation->mysql_prep($info['address']));
+        $this->city = trim($this->form_validation->mysql_prep($info['city']));
+        $this->zipcode = trim($info['zipcode']);
+        $this->country = trim($this->form_validation->mysql_prep($info['country']));
+
+        $this->updated = time();
+
+    }
+
+    protected function validateAll(){
+       $field_errors = array();
+
+        // Check UserName
+        if (!$this->validateField('userName', $this->_validations['Username']['limit'], $this->_validations['Username']['regEx'] )){
+            $field_errors['Username'] = 'Error username';
+        };
+
+        // ToDo: Create validation for other fields
+
+        return !count($field_errors) > 0;
+    }
+
+    protected function validateField($name, $limit, $regEx = false)
+    {
+        $Name = ucfirst($name);
+        $value = $this->$name;
+        $length = explode('-', $limit);
+        $min = intval($length[0]);
+        $max = intval($length[1]);
+
+        if (!$max and !$min) {
+           // $this->log->error("Invalid second parameter for the $name validation");
+            return false;
+        }
+
+        if (!$value) {
+            if (is_null($value)) {
+               // $this->log->report("Missing index $name from the input");
+            }
+            if (strlen($value) == $min) {
+              //  $this->log->report("$Name is blank and optional - skipped");
+                return true;
+            }
+          //  $this->log->formError($name, "$Name is required.");
+            return false;
+        }
+
+        // Validate the value maximum length
+        if (strlen($value) > $max) {
+           // $this->log->formError($name, "The $Name is larger than $max characters.");
+            return false;
+        }
+
+        // Validate the value minimum length
+        if (strlen($value) < $min) {
+          //  $this->log->formError($name, "The $Name is too short. It should at least be $min characters long");
+            return false;
+        }
+
+        // Validate the value pattern
+        if ($regEx) {
+            preg_match($regEx, $value, $match);
+            if (preg_match($regEx, $value, $match) === 0) {
+               // $this->log->formError($name, "The $Name \"{$value}\" is not valid");
+                return false;
+            }
+        }
+
+        /*
+         * If the execution reaches this point then the field value
+         * is considered to be valid
+         */
+        //$this->log->report("The $name is Valid");
+
+        return true;
     }
 
 }

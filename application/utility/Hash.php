@@ -51,9 +51,9 @@ class Hash
      *
      * @return string
      */
-    public function generateUserPassword(User $user, $password, $generateOld = false)
+    public function generateUserPassword($user, $password, $generateOld = false)
     {
-        $registrationDate = $user->RegDate;
+        $registrationDate = $user->getcreated();
 
         $pre = $this->encode($registrationDate);
         $pos = substr($registrationDate, 5, 1);

@@ -137,4 +137,59 @@ class Model
         // fetch() is the PDO method that get exactly one result
         return $query->fetch()->amount;
     }
+
+    /**
+     * Use to check if the value already exist in database
+     * @return true or false
+     */
+    public function isUnique($table, $value, $col=null){
+
+        echo $value;
+
+       if($col == null) {
+            return false;
+       }
+        $sql = "SELECT  {$col} FROM {$table}";
+
+        $sql .= " WHERE {$col} = :email " ;
+
+        $query = $this->db->prepare($sql);
+
+        $parameters = array(':email' => $value);
+
+        $query->execute($parameters);
+
+        print_r( $query->fetchAll());
+
+        return ! count($query->fetchAll()) > 0 ;
+    }
+
+    /**
+     * Create a new user
+     */
+    public function addUser($table, $data){
+        $keys = array_keys($data);
+        $fields = '`'.implode('`, `',$keys).'`';
+        $placeholder = '';
+        for ( $i = 0; $i < count($keys); $i++){
+            $placeholder .= '?';
+            if($i != (count($keys)-1)){
+                $placeholder .= ', ';
+            }
+        }
+        $sql = "INSERT INTO {$table}  ({$fields}) VALUES ({$placeholder})" ;
+        $query = $this->db->prepare($sql);
+        return $query->execute(array_values($data));
+    }
+
+    /**
+     * Get the last id
+     */
+
+    public function getLastId($table){
+        $sql = "SELECT id FROM {$table}  ORDER BY id DESC LIMIT 1" ;
+        $query = $this->db->prepare($sql);
+        $query->execute();
+        return $query->fetch();
+    }
 }

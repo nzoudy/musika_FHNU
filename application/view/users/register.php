@@ -6,10 +6,10 @@
 
         <hr/>
 
-        <form method="post" action="<?php echo URL . 'users/register/' ?>" data-success="<?php echo URL ?>/users/login">
+        <form method="post" action="<?php echo URL . 'users/createUser/' ?>" data-success="<?php echo URL ?>/users/login">
             <div class="form-group">
                 <label>Username:</label>
-                <input name="Username" type="text" required class="form-control" autofocus>
+                <input name="username" type="text" required class="form-control" autofocus>
             </div>
 
             <div class="form-group">
@@ -24,38 +24,48 @@
 
             <div class="form-group">
                 <label>Email: </label>
-                <input name="Email" type="text" required class="form-control">
+                <input name="email" type="text" required class="form-control">
             </div>
 
             <div class="form-group">
                 <label>Password:</label>
-                <input name="Password" type="password" required class="form-control">
+                <input name="password" type="password" required class="form-control">
             </div>
 
             <div class="form-group">
                 <label>Confirm Password:</label>
-                <input name="Password2" type="password" required class="form-control">
+                <input name="password2" type="password" required class="form-control">
             </div>
 
             <div class="form-group">
-                <label>Website: </label>
-                <input name="website" type="text" class="form-control">
+                <label>Telephone: </label>
+                <input name="telephone" type="telephone" class="form-control">
             </div>
 
             <div class="form-group">
-                <label>Group: </label>
-                <select name="GroupID" class="form-control">
-                    <option value="1">User</option>
-                    <option value="2">Developer</option>
-                    <option value="3">Designer</option>
-                </select>
+                <label>Address: </label>
+                <input name="address" type="text" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>City: </label>
+                <input name="city" type="text" class="form-control">
             </div>
 
+            <div class="form-group">
+                <label>Zip Code: </label>
+                <input name="zipcode" type="number" min="0" max="999999" class="form-control">
+            </div>
 
+            <div class="form-group">
+                <label>Country: </label>
+                <input name="country" type="text" class="form-control">
+            </div>
+
+            <? $getWebsitehost = APPNAME; ?>
+            <input name="musika_user_registration" type="hidden" value="<?php echo $getWebsitehost; ?>">
             <div class="form-group text-center">
                 <button type="submit" class="btn btn-primary">Register</button>
                 <br>
-                <a href="<?php echo URL ?>/users/login" class="">Login</a>
             </div>
         </form>
 
