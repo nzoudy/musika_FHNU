@@ -24,6 +24,13 @@ class User extends Model {
     private $created;
     private $updated;
 
+    function __construct()
+    {
+        // Instantiate the hash generator
+        $this->hash = new Hash();
+    }
+
+
     /**
      * @return mixed
      */
@@ -221,6 +228,15 @@ class User extends Model {
 
     // 1 to N add new users
 
+    /**
+     * Check if a user currently signed-in
+     *
+     * @return bool
+     */
+    public function isSigned()
+    {
+        return (bool) $this->session->signed;
+    }
 
     /**
      * Register A New User
@@ -240,7 +256,7 @@ class User extends Model {
      */
     public function register($info, $activation = false)
     {
-        $this->log->channel('registration'); //Index for Errors and Reports
+       // $this->log->channel('registration'); //Index for Errors and Reports
 
         /*
          * Prevent a signed user from registering a new user
@@ -249,7 +265,7 @@ class User extends Model {
          * with the clone.
          */
         if ($this->isSigned()) {
-            $this->log->error(15);
+            // $this->log->error(15);
             return false;
         }
 

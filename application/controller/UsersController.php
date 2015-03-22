@@ -28,6 +28,7 @@ class Users  extends Controller{
         echo $_POST;
 
     }
+
     public function login(){
 
         echo $_POST;
