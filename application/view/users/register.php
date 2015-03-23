@@ -6,7 +6,7 @@
 
         <hr/>
 
-        <form method="post" action="<?php echo URL . 'users/createUser/' ?>" data-success="<?php echo URL ?>/users/login">
+        <form method="post" action="<?php echo URL . 'users/addUser/' ?>" data-success="<?php echo URL ?>/users/login">
             <div class="form-group">
                 <label>Username:</label>
                 <input name="username" type="text" required class="form-control" autofocus>

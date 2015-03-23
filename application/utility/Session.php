@@ -9,7 +9,7 @@
 namespace Utility;
 
 
-class Session extends LinkedCollection
+class Session
 {
     /** @var  Log - Log errors and report */
     public $log;
@@ -51,6 +51,30 @@ class Session extends LinkedCollection
 
     }
 
+    /**
+     * Magic getter for all first child properties
+     *
+     * @param string $name
+     *
+     * @return bool|mixed
+     */
+    public function __get($name) {
+        if(!isset($_SESSION[$this->namespace][$name])){
+            return false;
+        }
+        return $_SESSION[$this->namespace][$name];
+    }
+
+    /**
+     * Magic setter for all first child properties
+     *
+     * @param string $name
+     * @param string $value
+     */
+    public function __set($name, $value)
+    {
+        $this->$name = $value;
+    }
 
     /**
      * Get current session ID identifier

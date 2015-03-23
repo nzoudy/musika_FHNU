@@ -318,7 +318,6 @@ class User extends Model {
      */
     public function register($info, $activation = false)
     {
-
         // $this->log->channel('registration'); //Index for Errors and Reports
 
         /*
@@ -327,13 +326,14 @@ class User extends Model {
          * clone the signed user object a register the new user
          * with the clone.
          */
-       /* if ($this->isSigned()) {
+
+        if ($this->isSigned()) {
             // $this->log->error(15);
             return false;
-        }*/
+        }
 
 
-       // Saves Registration Data in Class
+        // Saves Registration Data in Class
          $this->updateInfo($info);
 
         //Validate All Fields
@@ -344,32 +344,26 @@ class User extends Model {
         //Set Registration Date
         $this->created = time();
 
-        /*
-         * Built in actions for special fields
-         */
-
         //Hash Password , always use generate -> false
         if ($this->password) {
-            $this->password = $this->hash->generateUserPassword($this, $this->password);
+            $this->password = $this->hash->generateUserPassword($this, $this->password, false);
         }
 
-
-        // Todo: // create a function to avoid duplicate email and username
         //Check for Email in database
-     /*   if($this->email){
-            if($this->isUnique('user', $this->email, 'email')){
-                return false;
+        if($this->email){
+            if(!$this->isUnique('user', $this->email, 'email')){
+                //create session log errors
+               return false;
             }
-        }*/
-
+        }
 
         //Check for Username in database
-      /*  if ($this->userName) {
-            if ($this->isUnique('user', $this->userName, 'username')) {
+        if ($this->userName) {
+            if (!$this->isUnique('user', $this->userName, 'username')) {
+                //create session log errors
                 return false;
             }
-        }*/
-
+        }
 
         //User Activation
         if (!$activation) {
@@ -397,12 +391,10 @@ class User extends Model {
             // Set the new user ID by getting the last userid
             $this->userId = $this->getLastId('user')->id;
             // created a new session
-            $this->session->data = md5( $this->userId.$this->email);
-
-            print_r($this->session->data);
-            die;
+            $this->session->key = md5($this->userId.$this->email);
             // set the session signed
             $this->session->signed = true;
+            $this->session->userId = $this->userId;
             return true;
         }else {
             return false;
@@ -413,16 +405,13 @@ class User extends Model {
         $this->userName = trim($this->form_validation->mysql_prep($info['username']));
         $this->fistName = trim($this->form_validation->mysql_prep($info['first_name']));
         $this->lastName = trim($this->form_validation->mysql_prep($info['last_name']));
-
         $this->email = trim($info['email']);
         $this->password = trim($info['password']);
         $this->telephone = trim($info['telephone']);
-
         $this->address = trim($this->form_validation->mysql_prep($info['address']));
         $this->city = trim($this->form_validation->mysql_prep($info['city']));
         $this->zipcode = trim($info['zipcode']);
         $this->country = trim($this->form_validation->mysql_prep($info['country']));
-
         $this->updated = time();
 
     }

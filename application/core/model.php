@@ -161,7 +161,7 @@ class Model
 
         print_r( $query->fetchAll());
 
-        return ! count($query->fetchAll()) > 0 ;
+        return count($query->fetchAll()) > 0 ;
     }
 
     /**
