@@ -142,26 +142,27 @@ class Model
      * Use to check if the value already exist in database
      * @return true or false
      */
-    public function isUnique($table, $value, $col=null){
+    public function isUnique($table, $value, $colTocheck, $col=null){
+        $result = $this->getdata($table, $value, $colTocheck, $col=null);
+        return count($result) == 0;
+    }
 
-        echo $value;
 
-       if($col == null) {
-            return false;
-       }
+    public function getdata($table, $value, $colTocheck = null, $col=null){
+        if($col == null) {
+            $col = '*';
+        }
         $sql = "SELECT  {$col} FROM {$table}";
 
-        $sql .= " WHERE {$col} = :email " ;
+        $sql .= " WHERE {$colTocheck} = :{$colTocheck}  LIMIT 1";
 
         $query = $this->db->prepare($sql);
 
-        $parameters = array(':email' => $value);
+        $parameters = array(":{$colTocheck}" => $value);
 
         $query->execute($parameters);
 
-        print_r( $query->fetchAll());
-
-        return count($query->fetchAll()) > 0 ;
+        return $query->fetchAll();
     }
 
     /**
@@ -185,7 +186,6 @@ class Model
     /**
      * Get the last id
      */
-
     public function getLastId($table){
         $sql = "SELECT id FROM {$table}  ORDER BY id DESC LIMIT 1" ;
         $query = $this->db->prepare($sql);

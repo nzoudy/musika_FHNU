@@ -13,13 +13,8 @@
             </div>
 
             <div class="form-group">
-                <label>First Name:</label>
-                <input name="first_name" type="text" class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label>Last Name:</label>
-                <input name="last_name" type="text" class="form-control">
+                <label>Fullname:</label>
+                <input name="fullname" type="text" class="form-control">
             </div>
 
             <div class="form-group">
@@ -35,30 +30,6 @@
             <div class="form-group">
                 <label>Confirm Password:</label>
                 <input name="password2" type="password" required class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label>Telephone: </label>
-                <input name="telephone" type="telephone" class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label>Address: </label>
-                <input name="address" type="text" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>City: </label>
-                <input name="city" type="text" class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label>Zip Code: </label>
-                <input name="zipcode" type="number" min="0" max="999999" class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label>Country: </label>
-                <input name="country" type="text" class="form-control">
             </div>
 
             <? $getWebsitehost = APPNAME; ?>

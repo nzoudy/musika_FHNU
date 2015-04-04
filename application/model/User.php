@@ -15,26 +15,22 @@ use Utility\Session;
 
 class User extends Model {
     private $userName;
-    private $firstName;
-    private $lastName;
+    private $fullName;
     private $userId;
     private $email;
     private $password;
-    private $telephone;
-    private $address;
-    private $city;
-    private $zipcode;
-    private $country;
     private $created;
     private $updated;
 
+    // Todo: Refactor the user Table and add groupid, Refactor song table add userid
+    // Todo: Remove useless user fields like : address, telephone, zipcode, country
     /** @var Collection - Class configuration options */
     public $config = array(
         'cookieTime'      => '30',
         'cookieName'      => 'auto',
         'cookiePath'      => '/',
         'cookieHost'      => false,
-        'userSession'     => 'userData',
+        'userSession'     => 'userData_musika',
     );
 
     /** @var  Hash - Use to generate hashes */
@@ -52,34 +48,16 @@ class User extends Model {
             'limit' => '3-15',
             'regEx' => '/^([a-zA-Z0-9_])+$/'
         ),
-        'Firstname' => array(
-            'limit' => '3-15',
-            'regEx' => '/^([a-zA-Z0-9_])+$/'
+        'Fullname' => array(
+            'limit' => '3-200',
+            'regEx' => '/^([a-zA-Z0-9_ .])+$/'
         ),
-        'Lastname' => array(
-            'limit' => '3-15',
-            'regEx' => '/^([a-zA-Z0-9_])+$/'
-        ),
-        'Country' => array(
-            'limit' => '3-15',
-            'regEx' => '/^([a-zA-Z ])+$/'
-        ),
-
-        'city' => array(
-            'limit' => '3-15',
-            'regEx' => '/^([a-zA-Z0-9_ ])+$/'
-        ),
-        'zipcode' => array(
-            'limit' => '2-8',
-            'regEx' => '/^([0-9])+$/'
-        ),
-
         'Password' => array(
-            'limit' => '3-15',
+            'limit' => '3-150',
             'regEx' => ''
         ),
         'Email'    => array(
-            'limit' => '4-45',
+            'limit' => '3-100',
             'regEx' => '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,63})$/i'
         )
     );
@@ -96,54 +74,45 @@ class User extends Model {
         $this->session = new Session($this->config['userSession']);
     }
 
+    /**
+     * @return mixed
+     */
+    public function getUserName()
+    {
+        return $this->userName;
+    }
+
+    /**
+     * @param mixed $userName
+     */
+    public function setUserName($userName)
+    {
+        $this->userName = $userName;
+    }
+
 
     /**
      * @return mixed
      */
-    public function getFirstName()
+    public function getFullName()
     {
-        return $this->firstName;
+        return $this->fullName;
     }
 
     /**
-     * @param mixed $firstName
+     * @param mixed $fullName
      */
-    public function setFirstName($firstName)
+    public function setFullName($fullName)
     {
-        $this->firstName = $firstName;
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function getLastName()
-    {
-        return $this->lastName;
+        $this->fullName = $fullName;
     }
 
     /**
-     * @param mixed $lastName
-     */
-    public function setLastName($lastName)
-    {
-        $this->lastName = $lastName;
-    }
-
-    /**
-     * @return mixed
+     * @return mixed set userid is done privately
      */
     public function getUserId()
     {
         return $this->userId;
-    }
-
-    /**
-     * @param mixed $userId
-     */
-    public function setUserId($userId)
-    {
-        $this->userId = $userId;
     }
 
     /**
@@ -178,85 +147,6 @@ class User extends Model {
         $this->password = $password;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getTelephone()
-    {
-        return $this->telephone;
-    }
-
-    /**
-     * @param mixed $telephone
-     */
-    public function setTelephone($telephone)
-    {
-        $this->telephone = $telephone;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAddress()
-    {
-        return $this->address;
-    }
-
-    /**
-     * @param mixed $address
-     */
-    public function setAddress($address)
-    {
-        $this->address = $address;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCity()
-    {
-        return $this->city;
-    }
-
-    /**
-     * @param mixed $city
-     */
-    public function setCity($city)
-    {
-        $this->city = $city;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getZipcode()
-    {
-        return $this->zipcode;
-    }
-
-    /**
-     * @param mixed $zipcode
-     */
-    public function setZipcode($zipcode)
-    {
-        $this->zipcode = $zipcode;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCountry()
-    {
-        return $this->country;
-    }
-
-    /**
-     * @param mixed $country
-     */
-    public function setCountry($country)
-    {
-        $this->country = $country;
-    }
 
     /**
      * @return mixed
@@ -301,6 +191,54 @@ class User extends Model {
     }
 
     /**
+     * Set sign user session
+     * @Return void
+     */
+    public function setSigned()
+    {
+        $this->session->key = md5($this->userId.$this->email);
+        // set the session signed
+        $this->session->signed = true;
+        $this->session->userId = $this->userId;
+
+    }
+
+
+    public function userLogin(){
+        // Find if the user exist
+        $getUser = $this->getdata('user', $this->userName, 'username');
+
+        // Username doesn't exist
+        if(count($getUser) != 1){
+            return false;
+        }
+
+        // set user created date to generate the correct password
+        $this->setCreated($getUser[0]->created);
+        $currentPassword = $this->hash->generateUserPassword($this, $this->password, false);
+
+        // Passwords don't match
+        if(strcmp($getUser[0]->password, $currentPassword) !== 0){
+            return false;
+        }
+
+        // set all user info.
+        $this->userId = $getUser[0]->id;
+        $this->userName = $getUser[0]->username;
+        $this->email = $getUser[0]->email;
+        $this->password = $currentPassword;
+        $this->fullName = $getUser[0]->fullname;
+
+        // set user isSigned
+        $this->setSigned();
+        return true;
+    }
+
+    public function userlogout(){
+        $this->session->destroy();
+    }
+
+    /**
      * Register A New User
      * Takes two parameters, the first being required
      *
@@ -332,7 +270,6 @@ class User extends Model {
             return false;
         }
 
-
         // Saves Registration Data in Class
          $this->updateInfo($info);
 
@@ -349,17 +286,17 @@ class User extends Model {
             $this->password = $this->hash->generateUserPassword($this, $this->password, false);
         }
 
-        //Check for Email in database
+        //Check if the email already exists in db
         if($this->email){
-            if(!$this->isUnique('user', $this->email, 'email')){
+            if(!$this->isUnique('user', $this->email, 'email', 'email')){
                 //create session log errors
                return false;
             }
         }
 
-        //Check for Username in database
+        //Check if the Username already exists in db
         if ($this->userName) {
-            if (!$this->isUnique('user', $this->userName, 'username')) {
+            if (!$this->isUnique('user', $this->userName, 'username', 'username')) {
                 //create session log errors
                 return false;
             }
@@ -373,17 +310,9 @@ class User extends Model {
 
         $data = array();
         $data['username'] = $this->userName;
-        $data['firstname'] = $this->fistName;
-        $data['lastname'] = $this->lastName;
+        $data['fullname'] = $this->fullName;
         $data['email'] = $this->email;
         $data['password'] = $this->password;
-        $data['telephone'] = $this->telephone;
-        $data['address'] = $this->address;
-
-        $data['city'] = $this->city;
-        $data['zipcode'] = $this->zipcode;
-        $data['country'] = $this->country;
-
         $data['created'] = $this->created;
         $data['updated'] = $this->updated;
 
@@ -391,29 +320,24 @@ class User extends Model {
             // Set the new user ID by getting the last userid
             $this->userId = $this->getLastId('user')->id;
             // created a new session
-            $this->session->key = md5($this->userId.$this->email);
-            // set the session signed
-            $this->session->signed = true;
-            $this->session->userId = $this->userId;
+            $this->setSigned();
+
             return true;
         }else {
             return false;
         }
     }
 
-    protected  function updateInfo($info){
-        $this->userName = trim($this->form_validation->mysql_prep($info['username']));
-        $this->fistName = trim($this->form_validation->mysql_prep($info['first_name']));
-        $this->lastName = trim($this->form_validation->mysql_prep($info['last_name']));
-        $this->email = trim($info['email']);
-        $this->password = trim($info['password']);
-        $this->telephone = trim($info['telephone']);
-        $this->address = trim($this->form_validation->mysql_prep($info['address']));
-        $this->city = trim($this->form_validation->mysql_prep($info['city']));
-        $this->zipcode = trim($info['zipcode']);
-        $this->country = trim($this->form_validation->mysql_prep($info['country']));
-        $this->updated = time();
+    protected function checkPassword(){
 
+    }
+
+    protected function updateInfo($info){
+        $this->userName = trim($this->form_validation->mysql_prep($info['username']));
+        $this->fullName = trim($this->form_validation->mysql_prep($info['fullname']));
+        $this->email = trim($info['email']);
+        $this->password = $info['password'];
+        $this->updated = time();
     }
 
     protected function validateAll(){
@@ -424,7 +348,11 @@ class User extends Model {
             $field_errors['Username'] = 'Error username';
         };
 
-        // ToDo: Create validation for other fields
+        // Todo: Create validation for other fields
+        // Check fullname
+//        if (!$this->validateField('fullName', $this->_validations['Fullname']['limit'], $this->_validations['Fullname']['regEx'] )){
+//            $field_errors['Fullname'] = 'Error fullname';
+//        };
 
         return !count($field_errors) > 0;
     }

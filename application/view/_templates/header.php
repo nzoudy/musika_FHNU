@@ -27,6 +27,7 @@
         <a href="<?php echo URL; ?>home/exampleone">subpage</a>
         <a href="<?php echo URL; ?>home/exampletwo">subpage 2</a>
         <a href="<?php echo URL; ?>songs">songs</a>
+        <a href="<?php echo URL; ?>users">Account</a>
 
         <!-- if user login -->
 

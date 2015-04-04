@@ -52,28 +52,20 @@ CREATE TABLE IF NOT EXISTS `user` (
 `id` int(11) NOT NULL,
   `username` varchar(100) NOT NULL DEFAULT '',
   `password` varchar(40) NOT NULL DEFAULT '',
-  `firstname` varchar(150) NOT NULL DEFAULT '',
-  `lastname` varchar(150) NOT NULL DEFAULT '',
+  `fullname` varchar(250) NOT NULL DEFAULT '',
   `email` varchar(150) NOT NULL DEFAULT '',
-  `telephone` varchar(40) NOT NULL DEFAULT '000-000-00',
-  `address` varchar(150) NOT NULL DEFAULT '',
-  `city` varchar(100) NOT NULL DEFAULT '',
-  `country` varchar(100) NOT NULL DEFAULT '',
-  `zipcode` int(8) DEFAULT NULL,
+  `groupid` int(11) NOT NULL DEFAULT '6',
   `updated` int(11) DEFAULT NULL,
   `created` int(11) DEFAULT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=22 ;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `username`, `password`, `firstname`, `lastname`, `email`, `telephone`, `address`, `city`, `country`, `zipcode`, `updated`, `created`) VALUES
-(1, 'test', '1ce7e8b6111eb5b554f3364e8678a7988565c7f8', 'fis', 'nat', 'andrew.kato@gmail.com', '3434343434', 'dfdfdfdfv', 'vsfvsfsvfv', 'svfvsvfsv', 3434, 1427056758, 1427056758);
-
---
--- Indexes for dumped tables
---
+INSERT INTO `user` (`id`, `username`, `password`, `fullname`, `email`, `groupid`, `updated`, `created`) VALUES
+(20, 'test', 'bcc4a19de13afdf707a58e238b30658334ce824d', 'Test artist', 'testherm@gmail.com', 6, 1428163611, 1428163611),
+(21, 'adminmusika', 'aa035512fb483b907001a49b6d9147e3f70c8c55', 'Administrator', 'adminmusika@musika.com', 1, 1428163695, 1428163695);
 
 --
 -- Indexes for table `song`

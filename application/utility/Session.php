@@ -38,15 +38,9 @@ class Session
           //  $this->log->error('Session could not be started');
         }
 
-        if (is_null($namespace)) {
-            // Manage the whole session
-           // parent::__construct($_SESSION);
-        } else {
-            if (!isset($_SESSION[$namespace])) {
-                // Initialize the session namespace if does not exists yet
-                $_SESSION[$namespace] = array();
-            }
-
+        if (!isset($_SESSION[$namespace])) {
+            // Initialize the session namespace if does not exists yet
+            $_SESSION[$namespace] = array();
         }
 
     }
@@ -73,7 +67,7 @@ class Session
      */
     public function __set($name, $value)
     {
-        $this->$name = $value;
+        $_SESSION[$this->namespace][$name]= $value;
     }
 
     /**
