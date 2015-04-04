@@ -1,5 +1,8 @@
 <div class="container">
     <div class="row">
+       <?php $u = $user->getFullName(); if(!empty($u)) { ?>
+            <h4> Hi, <?php echo htmlspecialchars($user->getFullName(), ENT_QUOTES, 'UTF-8'); ?></h4>
+        <?php }?>
         <div class="col-sm-12 text-right">
             <a href="<?php echo URL . 'users/logout' ?>">Logout</a>
         </div>
@@ -9,9 +12,10 @@
         <div class="col-sm-3">
             <ul>
                 <li class="active"><a href="<?php echo URL; ?>/users">My songs</a></li>
-                <li class="active"><a href="<?php echo URL; ?>users/profile">My profile</a></li>
-                <li class="active"><a href="<?php echo URL; ?>users/resetpassword">Reset Password</a></li>
-                <li class="active"><a href="<?php echo URL; ?>users/deleteaccount">Delete your account</a></li>
+                <li class=""><a href="<?php echo URL; ?>users/profile/<?php echo htmlspecialchars($user->getUserName(), ENT_QUOTES, 'UTF-8'); ?>">My profile</a></li>
+                <li class=""><a href="<?php echo URL; ?>users/resetpassword/<?php echo htmlspecialchars($user->getUserName(), ENT_QUOTES, 'UTF-8');  ?>">Reset Password</a></li>
+                <li class=""><a onclick="javascript: return confirm('Please confirm deletion');" href="<?php echo URL; ?>users/deleteaccount/<?php echo htmlspecialchars($user->getUserId(), ENT_QUOTES, 'UTF-8');?>">Delete your account</a></li>
+
             </ul>
         </div>
         <div class="col-sm-9" style="border-left: 1px solid #000;">
@@ -28,7 +32,6 @@
                     </form>
                 </div>
             </div>
-
 
             <div class="row">
                 <div class="col-sm-12">
@@ -73,7 +76,6 @@
                    <<  < page (1/20) >  >>
 
                 </div>
-
             </div>
         </div>
     </div>

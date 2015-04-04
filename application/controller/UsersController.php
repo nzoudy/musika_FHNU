@@ -19,12 +19,19 @@ class Users  extends Controller{
         // New user instance
         $user = new User($this->db);
         $emp = $user->isSigned();
+
         if(empty($emp)){
             $this->view->redirect_to( URL. 'users/login');
             return;
         }
 
+        // load user data from the database
+        $user->loadData();
+
         $songModel = new Song($this->db);
+        // user details
+        $this->view->user = $user;
+
 
         // getting all songs and amount of songs
         $this->view->songs = $songModel->getAllSongs();
@@ -56,16 +63,68 @@ class Users  extends Controller{
         // New user instance
         $user = new User($this->db);
         $emp = $user->isSigned();
-        if(!empty($emp)){
-            $this->view->redirect_to( URL. 'users/');
+
+        if(empty($emp)){
+            $this->view->redirect_to( URL. 'users/login');
             return;
         }
+
+        // load user data from the database
+        $user->loadData();
+
+        $this->view->user = $user;
+
         // set page title
         $this->view->title = "Edit profile";
         // load views
         $this->view->render('profile.php');
         // Todo: Handle errors in user data register by cookies
     }
+
+    public function postProfile(){
+
+        // New user instance
+        $user = new User($this->db);
+        $emp = $user->isSigned();
+
+        $user->loadData();
+
+        $temp_username= $user->getUserName();
+
+        if(empty($emp)){
+            $this->view->redirect_to( URL. 'users/');
+            return;
+        }
+
+        if(!isset($_POST["musika_user_updateprofile"])){
+            // where to go after song has been added
+            $this->view->redirect_to( URL. 'error/index');
+        }
+
+        // errors array
+        // Todo: if errors exists redirect to the register view with errors message
+        $errors = array();
+        // validate data
+        // perform validations on the form data
+        $required_fields = array('username','fullname', 'email', 'musika_user_updateprofile');
+
+        $errors = array_merge($errors, $user->form_validation->check_required_fields($required_fields, $_POST));
+
+        if (count($errors) > 0 ){
+            // Todo: Return to the register with errors message.
+            // errors
+            $this->view->redirect_to( URL. 'error/index');
+        }
+
+        // Add the new user in the database
+        if(!$user->updateUserdata($_POST)){
+            // with errors
+            $this->view->redirect_to( URL. 'users/profile'.$temp_username);
+        }
+        // Todo: Render user index account page with success message
+        $this->view->redirect_to(URL. 'users/profile'.$temp_username);
+    }
+
 
     public function addUser($errors = null){
 
@@ -155,6 +214,34 @@ class Users  extends Controller{
             $this->view->redirect_to( URL. 'users/');
             return;
         }
+    }
+
+    public function deleteaccount($id){
+        // New user instance
+        $user = new User($this->db);
+        $emp = $user->isSigned();
+        if (empty($emp)) {
+            $this->view->redirect_to( URL. 'users/login');
+            return;
+        }
+        // load old user data from the database
+        $user->loadData();
+
+        if( $id != $user->getUserId()) {
+            $this->view->redirect_to( URL. 'users/');
+            return;
+        }
+
+        if($user->removeuser($id)){
+            $user->session->destroy();
+            $this->view->redirect_to( URL. 'users/login');
+            return;
+        }else{
+            $this->view->redirect_to( URL. 'users/profile/'.$user->getUserName());
+            return;
+        }
+      //  echo $user->getUserId()."<br>";
+    //    die;
     }
 
 

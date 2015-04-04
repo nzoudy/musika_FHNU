@@ -24,30 +24,4 @@ class Home extends Controller
         $this->view->render('index.php');
 
     }
-
-    /**
-     * PAGE: exampleone
-     * This method handles what happens when you move to http://yourproject/home/exampleone
-     * The camelCase writing is just for better readability. The method name is case-insensitive.
-     */
-    public function exampleOne()
-    {
-        // set page title
-        $this->view->title = "exampleOne";
-        // load views
-        $this->view->render('example_one.php');
-    }
-
-    /**
-     * PAGE: exampletwo
-     * This method handles what happens when you move to http://yourproject/home/exampletwo
-     * The camelCase writing is just for better readability. The method name is case-insensitive.
-     */
-    public function exampleTwo()
-    {
-        // set page title
-        $this->view->title = "exampleTwo";
-        // load views
-        $this->view->render('example_two.php');
-    }
 }

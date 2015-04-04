@@ -226,8 +226,9 @@ class User extends Model {
         $this->userId = $getUser[0]->id;
         $this->userName = $getUser[0]->username;
         $this->email = $getUser[0]->email;
-        $this->password = $currentPassword;
+        //$this->password = $currentPassword;
         $this->fullName = $getUser[0]->fullname;
+        $this->updated = $getUser[0]->updated;
 
         // set user isSigned
         $this->setSigned();
@@ -328,31 +329,101 @@ class User extends Model {
         }
     }
 
+
+    public function updateUserdata($info){
+
+        if (!$this->isSigned()) {
+            return false;
+        }
+
+        // load old user data from the database
+          $this->loadData();
+
+        // Check username
+        if((strcmp($this->userName, trim($info['username'])) !== 0) &&
+            (!$this->isUnique('user', $info['username'], 'username', 'username'))){
+            return false;
+        }
+
+        // Check email
+        if((strcmp($this->email, trim($info['email'])) !== 0) &&
+            (!$this->isUnique('user', $this->email, 'email', 'email'))){
+            return false;
+        }
+
+        // Update userinfo with new data
+        $this->updateInfo($info);
+
+        //Validate All Fields
+        if (!$this->validateAll()) {
+            return false;
+        }
+
+        // Saves Registration data in Class
+        if ($this->updatedUser('user', $this->userName, $this->fullName, $this->email, $this->updated, $this->userId)){
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+
+    public function removeuser($id){
+        if(!$this->deleteuser('user', $id)){
+            return false;
+        }
+        return true;
+    }
+
     protected function checkPassword(){
 
     }
 
+    public function loadData(){
+        $getUser = $this->getdata('user', $this->session->userId, 'id', 'id, username, fullname, email, updated');
+        // check if the user exist in db
+        if(count($getUser) != 1){
+            return false;
+        }
+
+        // set all user info.
+        $this->userId = $getUser[0]->id;
+        $this->userName = $getUser[0]->username;
+        $this->fullName = $getUser[0]->fullname;
+        $this->email = $getUser[0]->email;
+        $this->updated = $getUser[0]->updated;
+
+        return;
+    }
+
     protected function updateInfo($info){
-        $this->userName = trim($this->form_validation->mysql_prep($info['username']));
-        $this->fullName = trim($this->form_validation->mysql_prep($info['fullname']));
-        $this->email = trim($info['email']);
-        $this->password = $info['password'];
+        $this->setUserName(trim($this->form_validation->mysql_prep($info['username'])));
+        $this->setFullName(trim($this->form_validation->mysql_prep($info['fullname'])));
+        $this->setEmail(trim($info['email']));
+
+        if(isset($info['password'])){
+            $this->setPassword($info['password']);
+        }
+
         $this->updated = time();
     }
 
     protected function validateAll(){
        $field_errors = array();
 
-        // Check UserName
+        // validate UserName
         if (!$this->validateField('userName', $this->_validations['Username']['limit'], $this->_validations['Username']['regEx'] )){
             $field_errors['Username'] = 'Error username';
         };
 
         // Todo: Create validation for other fields
-        // Check fullname
+        // validate fullname
 //        if (!$this->validateField('fullName', $this->_validations['Fullname']['limit'], $this->_validations['Fullname']['regEx'] )){
 //            $field_errors['Fullname'] = 'Error fullname';
 //        };
+
+        // validate email
+        //
 
         return !count($field_errors) > 0;
     }
