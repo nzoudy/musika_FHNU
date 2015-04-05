@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Apr 05, 2015 at 06:40 PM
+-- Generation Time: Apr 05, 2015 at 11:43 PM
 -- Server version: 5.5.39
 -- PHP Version: 5.4.31
 
@@ -32,14 +32,18 @@ CREATE TABLE IF NOT EXISTS `song` (
   `artist` text NOT NULL,
   `track` text NOT NULL,
   `link` text
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=11 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
 
 --
 -- Dumping data for table `song`
 --
 
 INSERT INTO `song` (`id`, `userid`, `artist`, `track`, `link`) VALUES
-(10, 20, 'Test artist manager', 'Track test', 'upload/liquido - liquido - narcotic.mp3');
+(11, 20, 'Test artist manager', 'Test track', 'upload/liquido - liquido - narcotic.mp3'),
+(13, 20, 'Test artist manager', 'Michel Sardo - Je vole', 'upload/Michel_Sardou_-_Je_Vole.mp3'),
+(14, 20, 'Test artist manager', 'Michel sardo - amour', 'upload/Michel_Sardou_-_La_Maladie_D_39_amour.mp3'),
+(15, 20, 'Test artist manager', 'Michel sardo - Mari', 'upload/Michel_Sardou_-_Les_Vieux_Mari_s_.mp3'),
+(16, 20, 'Test artist manager', 'Michel sardo - En chantant', 'upload/Michel_Sardou_-_En_chantant.mp3');
 
 -- --------------------------------------------------------
 
@@ -63,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `password`, `fullname`, `email`, `groupid`, `updated`, `created`) VALUES
-(20, 'test', 'bcc4a19de13afdf707a58e238b30658334ce824d', 'Test artist manager', 'testherm@gmail.com', 6, 1428182995, 1428163611),
+(20, 'test', 'bcc4a19de13afdf707a58e238b30658334ce824d', 'Test artist manager', 'testherm@gmail.com', 6, 1428265814, 1428163611),
 (21, 'adminmusika', 'aa035512fb483b907001a49b6d9147e3f70c8c55', 'Administrator', 'adminmusika@musika.com', 1, 1428163695, 1428163695);
 
 --
@@ -90,7 +94,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `song`
 --
 ALTER TABLE `song`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=11;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=17;
 --
 -- AUTO_INCREMENT for table `user`
 --
