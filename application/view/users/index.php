@@ -75,7 +75,7 @@
                                             <a href="#" data-src="<?php echo htmlspecialchars($song->link, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($song->link, ENT_QUOTES, 'UTF-8'); ?></a>
                                         <?php } ?>
                                     </td>
-                                    <td><a href="<?php echo URL . 'songs/deletesong/' . htmlspecialchars($song->id, ENT_QUOTES, 'UTF-8'); ?>">delete</a></td>
+                                    <td><a onclick="javascript: return confirm('Please confirm deletion');" href="<?php echo URL . 'songs/deletesong/' . htmlspecialchars($song->id, ENT_QUOTES, 'UTF-8'); ?>">delete</a></td>
                                     <td><a href="<?php echo URL . 'songs/editsong/' . htmlspecialchars($song->id, ENT_QUOTES, 'UTF-8'); ?>">edit</a></td>
                                 </tr>
                             <?php } ?>
@@ -86,7 +86,6 @@
                         </tbody>
                     </table>
                     <br>
-
                 </div>
             </div>
         </div>

@@ -139,7 +139,20 @@ class Songs extends Controller
             // in a real application we would also check if this db entry exists and therefore show the result or
             // redirect the users to an error page or similar
             // do getSong() in model/model.php
-            $this->view->song = $this->model->getSong($song_id);
+
+            $song = new Song($this->db);
+            $user = new User($this->db);
+
+            $emp = $user->isSigned();
+            if (empty($emp)) {
+                $this->view->redirect_to( URL. 'users/login');
+                return;
+            }
+
+            $user->loadData();
+
+            $this->view->user = $user;
+            $this->view->song = $song->getSongById($song_id, $user->getUserId());
 
             // load views. within the views we can echo out $song easily
             $this->view->render('edit.php');
