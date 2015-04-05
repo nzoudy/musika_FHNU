@@ -22,8 +22,6 @@ class Cookie {
     private $lifetime;
     /** @var  string The path of the cookie */
     private $path;
-    /** @var  string The host for which the host belongs to */
-    private $host;
 
     /**
      * Initializes a cookie
@@ -34,21 +32,13 @@ class Cookie {
      * @param string $path     _(optional)_ The URL path of the cookie
      * @param null   $host     _(optional)_ The host for which the host belongs to
      */
-    public function __construct($name, $value = '', $lifetime = 15, $path = '/', $host = null)
+    public function __construct($name, $value = null, $lifetime = 15, $path = '/')
     {
         $this->name = $name;
-
         //Defaults
         $this->value = $value;
         $this->setLifetime($lifetime);
         $this->setPath($path);
-        if (!$host) {
-            if (isset($_SERVER['SERVER_NAME'])) {
-                $this->setHost($_SERVER['SERVER_NAME']);
-            }
-        } else {
-            $this->setHost($host);
-        }
     }
 
     /**
@@ -71,15 +61,6 @@ class Cookie {
         $this->path = $path;
     }
 
-    /**
-     * Set the host to add the cookie for
-     *
-     * @param string $host
-     */
-    public function setHost($host)
-    {
-        $this->host = $host;
-    }
 
     /**
      * Sends the cookie to the browser
@@ -88,31 +69,12 @@ class Cookie {
      */
     public function add()
     {
-        if (!headers_sent()) {
-            // Set the cookie via PHP headers
-            $added = setcookie(
-                $this->name,
-                $this->value,
-                round(time() + 60 * 60 * 24 * $this->lifetime),
-                $this->path,
-                $this->host
-            );
-        } else {
-            //Headers have been sent use JavaScript to set the cookie
-            echo "<script>";
-            echo '
-              function setCookie(c_name,value,expiredays){
-                var exdate=new Date();
-                exdate.setDate(exdate.getDate()+expiredays);
-                document.cookie=c_name+ "=" +escape(value)+((expiredays==null) ? "" : "; expires="+exdate.toUTCString()) + "; domain="+ escape("' . $this->host . '") + "; path=" + escape("' . $this->path . '");
-              }
-            ';
-            echo "setCookie('{$this->name}','{$this->value}',{$this->lifetime})";
-            echo "</script>";
-            $added = true;
-        }
-
-        return $added;
+        setcookie(
+            $this->name,
+            $this->value,
+            round(time() + 60 * 60 * 24 * $this->lifetime),
+            $this->path
+        );
     }
 
     /**
@@ -123,17 +85,15 @@ class Cookie {
     public function destroy()
     {
         if (!is_null($this->getValue())) {
-            if (!headers_sent()) {
-                return setcookie(
-                    $this->name,
-                    '',
-                    time() - 3600,
-                    $this->path,
-                    $this->host
-                ); //Deletes Cookie
-            } else {
-                return false;
-            }
+
+            return setcookie(
+                $this->name,
+                '',
+                time() - 3600,
+                $this->path,
+                $this->host
+            ); //Deletes Cookie
+
         } else {
             // The cookie does not exists, there is nothing to destroy
             return true;

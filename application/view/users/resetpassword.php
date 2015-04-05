@@ -19,7 +19,21 @@
         </div>
         <div class="col-sm-9 ">
             <h2>Reset password</h2>
+            <?php if(isset($errors)){ ?>
+                <div class="col-sm-12 alert-danger" style="padding: 10px;">
+                    <?php
+                        for($i=0; $i< count($errors); $i++){
+                            echo $errors[$i]."<br>";
+                        }
+                    ?>
+                </div>
+            <?php }?>
 
+            <?php if(isset($success)){ ?>
+                <div class="col-sm-12 alert-success" style="padding: 10px;">
+                    <?php echo $success; ?>
+                </div>
+            <?php }?>
             <hr/>
 
             <form method="post" action="<?php echo URL . 'users/postresetpassword/'. $user->getUserId(); ?>">

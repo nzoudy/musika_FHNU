@@ -124,6 +124,20 @@ class Users  extends Controller{
     }
 
     public function resetpassword(){
+        // errors and sucess message
+        $cookie = new Cookie('messageresetpassword');
+        $c = $cookie->getValue();
+
+
+        if(!empty($c)){
+            if(!empty($c['errors'])) {
+                $this->view->errors = $c['errors'];
+            }
+            if(!empty($c['success'])){
+                $this->view->success = $c['success'];
+            }
+        }
+
         // New user instance
         $user = new User($this->db);
         $emp = $user->isSigned();
@@ -144,19 +158,21 @@ class Users  extends Controller{
     }
 
     public function postresetpassword($userid){
-        $cookie = new Cookie('resetpassword');
+        $cookie = new Cookie('messageresetpassword');
         $c = $cookie->getValue();
-        if(empty($c)){
+        if(!empty($c)){
             $cookie->destroy();
-        }else{
-            $cookie->add();
         }
+
+        die('get cookie'. $cookie->getValue());
 
         // New user instance
         $user = new User($this->db);
         $emp = $user->isSigned();
 
         $user->loadData();
+
+        $msg = array();
 
         if(empty($emp)){
             $this->view->redirect_to( URL. 'users/');
@@ -166,6 +182,7 @@ class Users  extends Controller{
         if(!isset($_POST["musika_user_resetpassword"])){
             // where to go after song has been added
             $this->view->redirect_to( URL. 'error/index');
+            return;
         }
 
 
@@ -175,9 +192,15 @@ class Users  extends Controller{
         // set user created date to generate the correct password
         $user->setCreated($getUser[0]->created);
 
-
         if (!$user->checkTwoPassword($getUser[0]->password, $_POST['oldpassword'])) {
             // error cookie don't match
+
+            $msg['errors'][] = "Error old passwords is wrong";
+
+            $cookie->setValue($msg);
+
+            die("errors : ". $cookie->getValue());
+
             $this->view->redirect_to( URL. 'users/resetpassword');
             return;
         }
@@ -185,6 +208,11 @@ class Users  extends Controller{
         //Check both password
         if(strcmp($_POST['newpassword'], $_POST['confirmpassword']) !== 0 ){
             // error cookie password don't match
+            $msg['errors'][]= "Error passwords don't match";
+
+            $cookie->setValue($msg);
+            $cookie->add();
+
             $this->view->redirect_to( URL. 'users/resetpassword');
             return;
         }
@@ -192,10 +220,22 @@ class Users  extends Controller{
         // Update new password
         if($user->updatePassword($_POST['newpassword'])){
             // success message
+            $msg['success'] = "Your password have been updated";
+            $cookie->setValue($msg);
+            $cookie->add();
+
             $this->view->redirect_to( URL. 'users/resetpassword');
+            return;
+
         }else{
             // error creating your new password
+            $msg['errors'][]= "Error creating your new password";
+
+            $cookie->setValue($msg);
+            $cookie->add();
+
             $this->view->redirect_to( URL. 'users/resetpassword');
+            return;
         }
 
         return;

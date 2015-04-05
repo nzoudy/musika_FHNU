@@ -79,6 +79,7 @@
                                     <td><a href="<?php echo URL . 'songs/editsong/' . htmlspecialchars($song->id, ENT_QUOTES, 'UTF-8'); ?>">edit</a></td>
                                 </tr>
                             <?php } ?>
+
                         <?php } else {?>
 
                         <?php }?>
