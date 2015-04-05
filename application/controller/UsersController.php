@@ -9,6 +9,7 @@
 use Musika\core\Controller;
 use Musika\model\User;
 use Musika\model\Song;
+use Utility\Cookie;
 
 // TODO: Create the table roles, authentication, and users table
 
@@ -122,6 +123,83 @@ class Users  extends Controller{
         $this->view->redirect_to(URL. 'users/profile'.$temp_username);
     }
 
+    public function resetpassword(){
+        // New user instance
+        $user = new User($this->db);
+        $emp = $user->isSigned();
+        if(empty($emp)){
+            $this->view->redirect_to( URL. 'users/');
+            return;
+        }
+
+        $user->loadData();
+
+        $this->view->user = $user;
+
+        // set page title
+        $this->view->title = "Reset password";
+        // load views
+        $this->view->render('resetpassword.php');
+
+    }
+
+    public function postresetpassword($userid){
+        $cookie = new Cookie('resetpassword');
+        $c = $cookie->getValue();
+        if(empty($c)){
+            $cookie->destroy();
+        }else{
+            $cookie->add();
+        }
+
+        // New user instance
+        $user = new User($this->db);
+        $emp = $user->isSigned();
+
+        $user->loadData();
+
+        if(empty($emp)){
+            $this->view->redirect_to( URL. 'users/');
+            return;
+        }
+
+        if(!isset($_POST["musika_user_resetpassword"])){
+            // where to go after song has been added
+            $this->view->redirect_to( URL. 'error/index');
+        }
+
+
+        // Find if the user exist
+        $getUser = $user->getdata('user', $user->getUserName(), 'username');
+
+        // set user created date to generate the correct password
+        $user->setCreated($getUser[0]->created);
+
+
+        if (!$user->checkTwoPassword($getUser[0]->password, $_POST['oldpassword'])) {
+            // error cookie don't match
+            $this->view->redirect_to( URL. 'users/resetpassword');
+            return;
+        }
+
+        //Check both password
+        if(strcmp($_POST['newpassword'], $_POST['confirmpassword']) !== 0 ){
+            // error cookie password don't match
+            $this->view->redirect_to( URL. 'users/resetpassword');
+            return;
+        }
+
+        // Update new password
+        if($user->updatePassword($_POST['newpassword'])){
+            // success message
+            $this->view->redirect_to( URL. 'users/resetpassword');
+        }else{
+            // error creating your new password
+            $this->view->redirect_to( URL. 'users/resetpassword');
+        }
+
+        return;
+    }
 
     public function addUser($errors = null){
 
@@ -208,7 +286,7 @@ class Users  extends Controller{
             $this->view->redirect_to( URL. 'users/login');
             return;
         }else{
-            $this->view->redirect_to( URL. 'users/');
+            $this->view->redirect_to( URL. 'users/profile');
             return;
         }
     }

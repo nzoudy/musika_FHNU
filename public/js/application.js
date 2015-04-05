@@ -37,7 +37,7 @@ $(function() {
     }
 
     // load audio
-        console.log($('audio').length);
+    $(function(){
         if($('audio').length > 0){
             // Setup the player to autoplay the next track
             var a = audiojs.createAll({
@@ -66,6 +66,9 @@ $(function() {
 
 
         }
+
+
+    });
 
 
 });

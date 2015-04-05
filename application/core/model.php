@@ -207,6 +207,16 @@ class Model
         return $query->execute($parameters);
     }
 
+    /**
+     * Update data in the database
+     */
+    public function updatedUserPassword($table, $password, $updated, $id){
+        $sql = "UPDATE {$table} SET password = :password, updated = :updated WHERE id = :user_id";
+        $query = $this->db->prepare($sql);
+        $parameters = array(':password' => $password,':updated'=> $updated ,':user_id' => $id);
+        return $query->execute($parameters);
+    }
+
 
     public function deleteuser($table, $id){
         $sql = "DELETE FROM {$table} WHERE id = :user_id";

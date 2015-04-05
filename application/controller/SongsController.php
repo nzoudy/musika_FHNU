@@ -195,9 +195,7 @@ class Songs extends Controller
         echo $amount_of_songs;
     }
 
-
     private function checkandMoveFile($file){
-
         if (($file["file"]["type"] == "audio/mp3") && ($file["file"]["size"] < 6144000)) {
             if ($file["file"]["error"] > 0) {
                return false;
@@ -209,7 +207,6 @@ class Songs extends Controller
                     return "upload/" . $file["file"]["name"];
                 }
             }
-
         } else{
             return false;
         }

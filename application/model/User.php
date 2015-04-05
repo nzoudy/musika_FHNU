@@ -375,8 +375,25 @@ class User extends Model {
         return true;
     }
 
-    protected function checkPassword(){
+    public function checkTwoPassword($hash, $nonHash){
+        $currentPassword = $this->hash->generateUserPassword($this, $nonHash, false);
+        if(strcmp($hash, $currentPassword) !== 0){
+            return false;
+        }
+        return true;
+    }
 
+    public function updatePassword($newpassword){
+        $newpassword = $this->hash->generateUserPassword($this, $newpassword, false);
+        $newupdatedtime = time();
+
+        if($this->updatedUserPassword('user', $newpassword, $newupdatedtime, $this->userId)){
+            $this->password = $newpassword;
+            $this->updated = $newupdatedtime;
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function loadData(){
