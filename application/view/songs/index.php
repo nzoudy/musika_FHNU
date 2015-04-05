@@ -20,17 +20,24 @@
                 </thead>
                 <tbody>
 
-                <?php foreach ($songs as $song) { ?>
-                    <tr>
-                        <td><?php if (isset($song->artist)) echo htmlspecialchars($song->artist, ENT_QUOTES, 'UTF-8'); ?></td>
-                        <td><?php if (isset($song->track)) echo htmlspecialchars($song->track, ENT_QUOTES, 'UTF-8'); ?></td>
-                        <td class="mangeplay">
-                            <?php if (isset($song->link)) { ?>
-                                <a href="#" data-src="<?php echo htmlspecialchars($song->link, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($song->link, ENT_QUOTES, 'UTF-8'); ?></a>
-                            <?php } ?>
-                        </td>
-                    </tr>
-                <?php } ?>
+                <?php if(!empty($songs)){?>
+
+                    <?php foreach ($songs as $song) { ?>
+                        <tr>
+                            <td><?php if (isset($song->artist)) echo htmlspecialchars($song->artist, ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php if (isset($song->track)) echo htmlspecialchars($song->track, ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td class="mangeplay">
+                                <?php if (isset($song->link)) { ?>
+                                    <a href="#" data-src="<?php echo htmlspecialchars($song->link, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($song->link, ENT_QUOTES, 'UTF-8'); ?></a>
+                                <?php } ?>
+                            </td>
+                        </tr>
+                    <?php } ?>
+
+                <?php } else {?>
+
+                <?php }?>
+
                 </tbody>
             </table>
 
