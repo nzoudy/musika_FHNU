@@ -4,13 +4,14 @@
         <p>Bien que l'industrie de la musique soit en pleine mutation, il y a toujours une demande pour les labels avant-gardistes.</p>
             Un label qui réussit recherchera de nouveaux talents, payera pour l'enregistrement et le mixage des albums,
           <br>  <p>sera à l’origine de tournées et fournira des services de promotion et de marketing pour son écurie d'artistes. </p>
-          <br>  <p>Si cela vous semble être le métier de vos rêves, cet article vous aidera à démarrer.</p>
+          <br>  <p>Si cela vous semble être le métier de vos rêves, ce site vous aidera à démarrer.</p>
 
         <p>
            <p> Pour le lancement le plus efficace possible, concentrez-vous sur un genre de musique en particulier pour construire
-            votre réputation. </p> <p>Cette orientation sera déterminée en grande partie par ce que vous souhaitez accomplir.
-            Si votre objectif est de gagner beaucoup d'argent, alors vous devez vous concentrer sur la musique populaire.</p>
-            <p>Si votre objectif est d'être le label de référence pour le jazzcore d'avant-garde du siècle 21e siècle,
+            votre réputation. Ne regarder pas dans vos débuts aux géants de la musqiue. N'oubliez pas une chose, ce site est
+        là pour ceux qui partent de zéro comme vous. </p> <p>Votre orientation sera déterminée en grande partie par ce que vous souhaitez
+            accomplir. Si votre objectif est de gagner beaucoup d'argent, alors vous devez vous concentrer sur la musique populaire.</p>
+            <p>Si votre objectif est d'être le label de référence pour le jazzcore d'avant-garde du 21e siècle,
             ce sur quoi vous devez vous concentrer et votre approche seront très différents.</p>
         </p>
 

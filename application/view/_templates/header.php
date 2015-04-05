@@ -28,10 +28,10 @@
     <!-- navigation -->
     <div class="navigation" align="left" style="width: 850px;
                                             margin: 30px auto; color: #222222">
-        <a href="<?php echo URL; ?>" style="margin-right: 20px; border-radius: 5px; background: gray; width: 130px">home</a>
-        <a href="<?php echo URL; ?>songs" style="margin-right: 20px; border-radius: 5px; background: gray; width: 130px">songs</a>
-        <a href="<?php echo URL; ?>users" style="margin-right: 20px; border-radius: 5px; background: gray; width: 130px">Account</a>
-        <a href="#" style="margin-right: 20px; border-radius: 5px; background: gray; width: 130px">FAQ</a>
+        <a href="<?php echo URL; ?>" style="margin-right: 20px; border-radius: 5px; background: gray; width: 130px; text-align: center">home</a>
+        <a href="<?php echo URL; ?>songs" style="margin-right: 20px; border-radius: 5px; background: gray; width: 130px;  text-align: center">songs</a>
+        <a href="<?php echo URL; ?>users" style="margin-right: 20px; border-radius: 5px; background: gray; width: 130px;  text-align: center">Account</a>
+        <a href="#" style="margin-right: 20px; border-radius: 5px; background: gray; width: 130px;  text-align: center">FAQ</a>
 
         <!-- if user login -->
 
