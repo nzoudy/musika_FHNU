@@ -2,11 +2,14 @@
     <!-- main content output -->
     <div class="row">
         <div class="col-sm-12">
+
+            <?php if(!empty($songs)){?>
             <h3>Listen</h3>
             <div>
                 <br>
                 <audio preload></audio>
             </div>
+            <?php }?>
         </div>
         <div class="col-sm-12">
             <h3>Listen our best songs</h3>
