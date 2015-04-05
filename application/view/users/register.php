@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" style="width: 700px; height: 600px; margin: 10px auto">
 
     <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
@@ -34,18 +34,14 @@
 
                 <?php $getWebsitehost = APPNAME; ?>
                 <input name="musika_user_registration" type="hidden" value="<?php echo $getWebsitehost; ?>">
-                <div class="form-group text-center">
-                    <button type="submit" class="btn btn-primary">Register</button>
+                <div class="form-group text-left">
+                    <button type="submit" class="btn btn-primary" style="background-color: #acb82d; margin-top: 15px; width: 130px; font-family: Arial">Register</button>
                     <br>
+                </div>
+                <div class="col-sm-12 text-left" style="background-color: #b89bad; border-radius: 5px; text-align: center; margin-top: 15px; width: 130px; font-family: Arial">
+                    <a href="<?php echo URL . 'users/login' ?>">Login</a>
                 </div>
             </form>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-sm-12 text-center">
-            <a href="<?php echo URL . 'users/login' ?>">Login</a>
-        </div>
-    </div>
-
 </div>
