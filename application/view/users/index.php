@@ -23,19 +23,25 @@
             <div class="row">
                 <div class="col-sm-12">
                     <h3>Add a song</h3>
-                    <form action="<?php echo URL; ?>users/addsong" method="POST">
-                        <label>Track Title</label>
+                    <form action="<?php echo URL."songs/addsong/".$user->getUserId(); ?>" method="POST" enctype="multipart/form-data">
+                        <label>Track Title *</label>
                         <input type="text" name="track" value="" required />
-                        <label>add your file MP3</label>
-                        <input type="text" name="link" value="" />
-                        <input type="submit" name="submit_add_song" value="Submit" />
+                        <br>
+                        <br>
+                        <label>Filename (MP3)</label>
+                        <input type="file" name="file" value="" />
+                        <br />
+
+                        <input type="submit" name="submit_add_song" value="Add" />
                     </form>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-sm-12">
+
                     <div>
+                        <br>
                         Audio Listner with HTML5
                     </div>
                 </div>
@@ -72,8 +78,6 @@
                         </tbody>
                     </table>
                     <br>
-
-                   <<  < page (1/20) >  >>
 
                 </div>
             </div>

@@ -3,6 +3,7 @@
 
 use Musika\core\Controller;
 use Musika\model\Song;
+use Musika\model\User;
 
 /**
  * Class Songs
@@ -45,16 +46,42 @@ class Songs extends Controller
      * the users back to songs/index via the last line: header(...)
      * This is an example of how to handle a POST request.
      */
-    public function addSong()
+    public function addSong($userid)
     {
+        // New user instance
+        $user = new User($this->db);
+        $emp = $user->isSigned();
+        if (empty($emp)) {
+            $this->view->redirect_to( URL. 'users/login');
+            return;
+        }
+
         // if we have POST data to create a new song entry
-        if (isset($_POST["submit_add_song"])) {
+        if (isset($_POST["submit_add_song"]) && (isset($_FILES))) {
+
+            // Move the file to the uploads folder
+            $pathFile =  $this->checkandMoveFile($_FILES);
+            if(!$pathFile){
+                return;
+            }
+
+            //check if file is mp3
+
+            var_dump($_POST);
+
+            echo $pathFile."<br>";
+
+            die;
+            // add new song to the database
+
             // do addSong() in model/model.php
             $this->model->addSong($_POST["artist"], $_POST["track"],  $_POST["link"]);
+
+            //
         }
 
         // where to go after song has been added
-        header('location: ' . URL . 'songs/index');
+        $this->view->redirect_to( URL. 'users/');
     }
 
     /**
@@ -135,11 +162,28 @@ class Songs extends Controller
         echo $amount_of_songs;
     }
 
-    public function testsong()
-    {
-        $this->view->title = "TEST";
-        // load views
-        $this->view->render('testsong.php');
+
+    private function checkandMoveFile($file){
+
+        if (($file["file"]["type"] == "audio/mp3") && ($file["file"]["size"] < 6144000)) {
+            if ($file["file"]["error"] > 0) {
+               return false;
+            } else {
+                if (file_exists("upload/" . basename($file["file"]["name"]))) {
+                    return false;
+                } else {
+                    move_uploaded_file($file["file"]["tmp_name"], "upload/" . basename($file["file"]["name"]));
+                    $pathfile = "upload/" . $file["file"]["name"];
+                    echo  $pathfile;
+                    die;
+                }
+            }
+
+        } else{
+            return false;
+        }
     }
+
+
 
 }
