@@ -1,4 +1,4 @@
-<div class="container" style="width: 700px; height: 360px; margin: 20px auto">
+<div class="container" style="width: 850px; height: 360px; margin: 30px auto">
     <div class="row">
         <div class="col-sm-6 col-sm-offset-3" style="">
             <h2>Login</h2>

@@ -16,16 +16,12 @@
         </p>
 
     </div>
-</div>
-
-<div class="container"  style=" width: 850px; margin: 20px auto; ">
-    <!-- <img src="img/web_radio.png" align="right" style="background-color: #777777"> -->
     <div class="row" >
         <h3>Laisser un commentaire</h3>
         <form method="post" action="">
             <div class="form-group">
                 <label>Votre nom (obligatoire)</label>
-                <input name="name" type="text" required class="form-control" autofocus style="width: 400px; text-align: left">
+                <input name="name" type="text" required class="form-control"  style="width: 400px; text-align: left">
             </div>
             <div class="form-group">
                 <label>Votre email (obligatoire / ne sera pas publié)</label>
@@ -48,3 +44,7 @@
         </form>
     </div>
 </div>
+
+
+
+
