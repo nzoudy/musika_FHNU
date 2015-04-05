@@ -36,4 +36,36 @@ $(function() {
         });
     }
 
+    // load audio
+        console.log($('audio').length);
+        if($('audio').length > 0){
+            // Setup the player to autoplay the next track
+            var a = audiojs.createAll({
+                trackEnded: function() {
+                    var next = $('tr td.mangeplay.playing').next();
+                    if (!next.length) next = $('tr td').first();
+                    next.addClass('playing').siblings().removeClass('playing');
+                    audio.load($('a', next).attr('data-src'));
+                    audio.play();
+                }
+            });
+
+            // Load in the first track
+            var audio = a[0];
+            first = $('tr td.mangeplay a').attr('data-src');
+            $('tr td.mangeplay').first().addClass('playing');
+            audio.load(first);
+
+            // Load in a track on click
+            $('tr td.mangeplay').click(function(e) {
+                e.preventDefault();
+                $(this).addClass('playing').siblings().removeClass('playing');
+                audio.load($('a', this).attr('data-src'));
+                audio.play();
+            });
+
+
+        }
+
+
 });

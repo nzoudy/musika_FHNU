@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-sm-3">
             <ul>
-                <li class=""><a href="<?php echo URL; ?>/users">My songs</a></li>
+                <li class=""><a href="<?php echo URL; ?>users">My songs</a></li>
                 <li class="active"><a href="<?php echo URL; ?>users/profile/<?php echo htmlspecialchars($user->getUserName(), ENT_QUOTES, 'UTF-8'); ?>">My profile</a></li>
                 <li class=""><a href="<?php echo URL; ?>users/resetpassword/<?php echo htmlspecialchars($user->getUserName(), ENT_QUOTES, 'UTF-8');  ?>">Reset Password</a></li>
                 <li class=""><a onclick="javascript: return confirm('Please confirm deletion');" href="<?php echo URL; ?>users/deleteaccount/<?php echo htmlspecialchars($user->getUserId(), ENT_QUOTES, 'UTF-8');?>">Delete your account</a></li>

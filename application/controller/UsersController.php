@@ -32,11 +32,8 @@ class Users  extends Controller{
         // user details
         $this->view->user = $user;
 
-
         // getting all songs and amount of songs
-        $this->view->songs = $songModel->getAllSongs();
-        $this->view->amount_of_songs = $songModel->getAmountOfSong();
-
+        $this->view->songs = $songModel->getAllSongs($user->getUserId());
         // set page title
         $this->view->title = "Profile";
         // load views

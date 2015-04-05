@@ -143,9 +143,8 @@ class Song extends model {
     /**
      * @return bool or an array of Song object
      */
-    public function getAllSongs(){
-        $songs = $this->getAll('song', array('id', 'artist', 'track', 'link'));
-
+    public function getAllSongs($userid = null){
+        $songs = $this->getAll('song', array('id','userid' ,'artist', 'track', 'link'), $userid);
         if(!$songs || count($songs)== 0)
             return false;
 
@@ -157,17 +156,12 @@ class Song extends model {
         return $this->getAmount('song');
     }
 
-    public function getSongById($song_id){
-        $this->model->getSong($song_id);
-
+    public function getSongById($song_id, $userid){
+        return $this->get($song_id, $userid);
     }
 
-    public function save(){
-
-    }
-
-    public function delete($song_id){
-
+    public function deleteSong($song_id, $userid){
+       return $this->delete($song_id, $userid);
     }
 
 

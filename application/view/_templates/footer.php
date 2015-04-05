@@ -9,6 +9,8 @@
 
     <!-- our JavaScript -->
     <script src="<?php echo URL; ?>js/bootstrap.min.js"></script>
+    <!-- audio plugin-->
+    <script src="<?php echo URL; ?>js/audiojs/audio.min.js"></script>
     <script src="<?php echo URL; ?>js/application.js"></script>
 </body>
 </html>

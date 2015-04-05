@@ -49,10 +49,18 @@ class Songs extends Controller
     public function addSong($userid)
     {
         // New user instance
+        $song = new Song($this->db);
         $user = new User($this->db);
+
         $emp = $user->isSigned();
         if (empty($emp)) {
             $this->view->redirect_to( URL. 'users/login');
+            return;
+        }
+
+        $user->loadData();
+
+        if($user->getUserId() != $userid){
             return;
         }
 
@@ -61,23 +69,12 @@ class Songs extends Controller
 
             // Move the file to the uploads folder
             $pathFile =  $this->checkandMoveFile($_FILES);
-            if(!$pathFile){
+
+            if(!(bool)$pathFile){
                 return;
             }
-
-            //check if file is mp3
-
-            var_dump($_POST);
-
-            echo $pathFile."<br>";
-
-            die;
-            // add new song to the database
-
             // do addSong() in model/model.php
-            $this->model->addSong($_POST["artist"], $_POST["track"],  $_POST["link"]);
-
-            //
+            $song->addSong($userid, $user->getFullName(), trim($_POST["track"]), $pathFile);
         }
 
         // where to go after song has been added
@@ -93,16 +90,39 @@ class Songs extends Controller
      * This is an example of how to handle a GET request.
      * @param int $song_id Id of the to-delete song
      */
-    public function deleteSong($song_id)
+    public function deletesong($song_id)
     {
+
+        // New user instance
+        $song = new Song($this->db);
+        $user = new User($this->db);
+
+        $emp = $user->isSigned();
+        if (empty($emp)) {
+            $this->view->redirect_to( URL. 'users/login');
+            return;
+        }
+
+        $user->loadData();
+
         // if we have an id of a song that should be deleted
-        if (isset($song_id)) {
-            // do deleteSong() in model/model.php
-            $this->model->deleteSong($song_id);
+        if (isset($song_id)){
+            $tempSong = $song->getSongById($song_id, $user->getUserId());
+
+            if(!empty($tempSong)){
+
+                if($song->deleteSong($song_id, $user->getUserId())){
+                    // delete file inside the database
+                    if (file_exists($tempSong->link)) {
+                        unlink($tempSong->link);
+                    }
+                }
+            }
+
         }
 
         // where to go after song has been deleted
-        header('location: ' . URL . 'songs/index');
+        header('location: ' . URL . 'users/');
     }
 
      /**
@@ -169,13 +189,11 @@ class Songs extends Controller
             if ($file["file"]["error"] > 0) {
                return false;
             } else {
-                if (file_exists("upload/" . basename($file["file"]["name"]))) {
+                if (file_exists("upload/" . $file["file"]["name"])) {
                     return false;
                 } else {
-                    move_uploaded_file($file["file"]["tmp_name"], "upload/" . basename($file["file"]["name"]));
-                    $pathfile = "upload/" . $file["file"]["name"];
-                    echo  $pathfile;
-                    die;
+                    move_uploaded_file($file["file"]["tmp_name"], "upload/" .$file["file"]["name"]);
+                    return "upload/" . $file["file"]["name"];
                 }
             }
 

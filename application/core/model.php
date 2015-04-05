@@ -19,8 +19,9 @@ class Model
     /**
      * Get all songs from database
      */
-    public function getAll($table, $cols=null)
+    public function getAll($table, $cols=null, $userid = null)
     {
+
        // $sql = "SELECT id, artist, track, link FROM {$table}";
         if(is_array($cols)){
             $strcols =  implode(",", $cols);
@@ -31,13 +32,17 @@ class Model
         }else{
             $sql = "SELECT  *  FROM {$table}";
         }
-        $query = $this->db->prepare($sql);
-        $query->execute();
 
-        // fetchAll() is the PDO method that gets all result rows, here in object-style because we defined this in
-        // core/controller.php! If you prefer to get an associative array as the result, then do
-        // $query->fetchAll(PDO::FETCH_ASSOC); or change core/controller.php's PDO options to
-        // $options = array(PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC ...
+        if($userid != null){
+            $sql .= " WHERE userid = :userid ";
+            $parameters = array(':userid' => $userid);
+            $query = $this->db->prepare($sql);
+            $query->execute($parameters);
+        }else{
+            $query = $this->db->prepare($sql);
+            $query->execute();
+        }
+
         return $query->fetchAll();
     }
 
@@ -52,11 +57,12 @@ class Model
      * @param string $track Track
      * @param string $link Link
      */
-    public function add($artist, $track, $link)
+    public function addSong($userid, $artist, $track, $link)
     {
-        $sql = "INSERT INTO song (artist, track, link) VALUES (:artist, :track, :link)";
+
+        $sql = "INSERT INTO song (userid, artist, track, link) VALUES (:userid, :artist, :track, :link)";
         $query = $this->db->prepare($sql);
-        $parameters = array(':artist' => $artist, ':track' => $track, ':link' => $link);
+        $parameters = array(':userid' => $userid, ':artist' => $artist, ':track' => $track, ':link' => $link);
 
         // useful for debugging: you can see the SQL behind above construction by using:
         // echo '[ PDO DEBUG ]: ' . Helper::debugPDO($sql, $parameters);  exit();
@@ -70,26 +76,22 @@ class Model
      * add/update/delete stuff!
      * @param int $song_id Id of song
      */
-    public function delete($song_id)
+    public function delete($song_id, $userid)
     {
-        $sql = "DELETE FROM song WHERE id = :song_id";
+        $sql = "DELETE FROM song WHERE id = :song_id AND userid = :userid";
         $query = $this->db->prepare($sql);
-        $parameters = array(':song_id' => $song_id);
-
-        // useful for debugging: you can see the SQL behind above construction by using:
-        // echo '[ PDO DEBUG ]: ' . Helper::debugPDO($sql, $parameters);  exit();
-
-        $query->execute($parameters);
+        $parameters = array(':song_id' => $song_id, ':userid' => $userid);
+        return $query->execute($parameters);
     }
 
     /**
      * Get a song from database
      */
-    public function get($song_id)
+    public function get($song_id, $userid)
     {
-        $sql = "SELECT id, artist, track, link FROM song WHERE id = :song_id LIMIT 1";
+        $sql = "SELECT id, artist, track, link FROM song WHERE (id = :song_id  AND userid = :userid) LIMIT 1";
         $query = $this->db->prepare($sql);
-        $parameters = array(':song_id' => $song_id);
+        $parameters = array(':song_id' => $song_id, ':userid' => $userid);
 
         // useful for debugging: you can see the SQL behind above construction by using:
         // echo '[ PDO DEBUG ]: ' . Helper::debugPDO($sql, $parameters);  exit();
