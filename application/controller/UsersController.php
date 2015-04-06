@@ -42,6 +42,22 @@ class Users  extends Controller{
     }
 
     public function register(){
+        // errors and sucess message
+        $cookie = new Cookie('messageregister');
+        $c = $cookie->getValue();
+        $msgArray = explode(":", $c);
+        $errArray = array();
+
+        if(!empty($c)){
+            if(!empty($msgArray)) {
+                if($msgArray[0]=='error'){
+                    $errArray[] = $msgArray[1];
+                    $this->view->errors = $errArray;
+                }
+            }
+        }
+        $cookie->destroy();
+
         // New user instance
         $user = new User($this->db);
         $emp = $user->isSigned();
@@ -57,7 +73,25 @@ class Users  extends Controller{
         // Todo: Handle errors in user data register by cookies
     }
 
-    public function profile(){
+    public function profile($username = null ){
+        // errors and sucess message
+        $cookie = new Cookie('messageprofile');
+        $c = $cookie->getValue();
+        $msgArray = explode(":", $c);
+        $errArray = array();
+
+        if(!empty($c)){
+            if(!empty($msgArray)) {
+                if($msgArray[0]=='error'){
+                    $errArray[] = $msgArray[1];
+                    $this->view->errors = $errArray;
+                }elseif($msgArray[0]=='success'){
+                    $this->view->success = $msgArray[1];
+                }
+            }
+        }
+        $cookie->destroy();
+
         // New user instance
         $user = new User($this->db);
         $emp = $user->isSigned();
@@ -81,6 +115,12 @@ class Users  extends Controller{
 
     public function postProfile(){
 
+        $cookie = new Cookie('messageprofile');
+        $c = $cookie->getValue();
+        if(!empty($c)){
+            $cookie->destroy();
+        }
+
         // New user instance
         $user = new User($this->db);
         $emp = $user->isSigned();
@@ -100,43 +140,57 @@ class Users  extends Controller{
         }
 
         // errors array
-        // Todo: if errors exists redirect to the register view with errors message
         $errors = array();
-        // validate data
         // perform validations on the form data
         $required_fields = array('username','fullname', 'email', 'musika_user_updateprofile');
 
         $errors = array_merge($errors, $user->form_validation->check_required_fields($required_fields, $_POST));
 
         if (count($errors) > 0 ){
-            // Todo: Return to the register with errors message.
             // errors
-            $this->view->redirect_to( URL. 'error/index');
+            $msg = "error:";
+            $msg .= implode("<br>", $errors);
+            $cookie->setValue($msg);
+            $cookie->add();
+            $this->view->redirect_to( URL. 'users/profile/'.$temp_username);
         }
 
         // Add the new user in the database
         if(!$user->updateUserdata($_POST)){
-            // with errors
-            $this->view->redirect_to( URL. 'users/profile'.$temp_username);
+            // errors
+            $msg = "error: Error updating your data, please try again. <br>";
+            $msg .= implode("<br>", $user->getFieldErrors());
+            $cookie->setValue($msg);
+            $cookie->add();
+            $user->setFieldErrors(null);
+            $this->view->redirect_to( URL. 'users/profile/'.$temp_username);
         }
-        // Todo: Render user index account page with success message
-        $this->view->redirect_to(URL. 'users/profile'.$temp_username);
+
+        // Send a success message
+        $msg = "success: Your data have been updated successfully";
+        $cookie->setValue($msg);
+        $cookie->add();
+        $this->view->redirect_to(URL. 'users/profile/'.$temp_username);
     }
 
     public function resetpassword(){
         // errors and sucess message
         $cookie = new Cookie('messageresetpassword');
         $c = $cookie->getValue();
-
+        $msgArray = explode(":", $c);
+        $errArray = array();
 
         if(!empty($c)){
-            if(!empty($c['errors'])) {
-                $this->view->errors = $c['errors'];
-            }
-            if(!empty($c['success'])){
-                $this->view->success = $c['success'];
+            if(!empty($msgArray)) {
+                if($msgArray[0]=='error'){
+                    $errArray[] = $msgArray[1];
+                    $this->view->errors = $errArray;
+                }elseif($msgArray[0]=='success'){
+                    $this->view->success = $msgArray[1];
+                }
             }
         }
+        $cookie->destroy();
 
         // New user instance
         $user = new User($this->db);
@@ -163,16 +217,12 @@ class Users  extends Controller{
         if(!empty($c)){
             $cookie->destroy();
         }
-
-        die('get cookie'. $cookie->getValue());
-
+        $msg = '';
         // New user instance
         $user = new User($this->db);
         $emp = $user->isSigned();
 
         $user->loadData();
-
-        $msg = array();
 
         if(empty($emp)){
             $this->view->redirect_to( URL. 'users/');
@@ -184,8 +234,6 @@ class Users  extends Controller{
             $this->view->redirect_to( URL. 'error/index');
             return;
         }
-
-
         // Find if the user exist
         $getUser = $user->getdata('user', $user->getUserName(), 'username');
 
@@ -194,13 +242,9 @@ class Users  extends Controller{
 
         if (!$user->checkTwoPassword($getUser[0]->password, $_POST['oldpassword'])) {
             // error cookie don't match
-
-            $msg['errors'][] = "Error old passwords is wrong";
-
+            $msg = "error: Error old passwords is wrong";
             $cookie->setValue($msg);
-
-            die("errors : ". $cookie->getValue());
-
+            $cookie->add();
             $this->view->redirect_to( URL. 'users/resetpassword');
             return;
         }
@@ -208,11 +252,9 @@ class Users  extends Controller{
         //Check both password
         if(strcmp($_POST['newpassword'], $_POST['confirmpassword']) !== 0 ){
             // error cookie password don't match
-            $msg['errors'][]= "Error passwords don't match";
-
+            $msg= "error:Error passwords don't match";
             $cookie->setValue($msg);
             $cookie->add();
-
             $this->view->redirect_to( URL. 'users/resetpassword');
             return;
         }
@@ -220,20 +262,17 @@ class Users  extends Controller{
         // Update new password
         if($user->updatePassword($_POST['newpassword'])){
             // success message
-            $msg['success'] = "Your password have been updated";
+            $msg = "success:Your password have been updated";
             $cookie->setValue($msg);
             $cookie->add();
-
             $this->view->redirect_to( URL. 'users/resetpassword');
             return;
 
         }else{
             // error creating your new password
-            $msg['errors'][]= "Error creating your new password";
-
+            $msg = "error:Error creating your new password";
             $cookie->setValue($msg);
             $cookie->add();
-
             $this->view->redirect_to( URL. 'users/resetpassword');
             return;
         }
@@ -243,6 +282,12 @@ class Users  extends Controller{
 
     public function addUser($errors = null){
 
+        $cookie = new Cookie('messageregister');
+        $c = $cookie->getValue();
+        if(!empty($c)){
+            $cookie->destroy();
+        }
+
         if(!isset($_POST["musika_user_registration"])){
             // where to go after song has been added
             $this->view->redirect_to( URL. 'error/index');
@@ -251,8 +296,6 @@ class Users  extends Controller{
         // New user instance
         $user = new User($this->db);
 
-        // errors array
-        // Todo: if errors exists redirect to the register view with errors message
         $errors = array();
         // validate data
         // perform validations on the form data
@@ -262,26 +305,47 @@ class Users  extends Controller{
 
         // Check passwords match
         $validePassword = $user->form_validation->checkMatchPassword($_POST['password'], $_POST['password2']) ;
-        if (count($errors) > 0 || (!$validePassword)){
-            // Todo: Return to the register with errors message.
+
+        if (count($errors) > 0 ){
             // errors
-            $this->view->redirect_to( URL. 'error/index');
+            $msg = "error:";
+            $msg .= implode("<br>", $errors);
+            $cookie->setValue($msg);
+            $cookie->add();
+            $this->view->redirect_to( URL. 'users/register');
+            return;
+        }
+
+        if(!$validePassword){
+            // errors
+            $msg = "error:";
+            $msg .= "Invalid or Passwords don't match <br>";
+            $cookie->setValue($msg);
+            $cookie->add();
+            $this->view->redirect_to( URL. 'users/register');
+            return;
         }
 
         // Add the new user in the database
         if(!$user->register($_POST)){
             // errors
-            $this->view->redirect_to( URL. 'error/index');
+            $msg = "error: Error registering your data, please try again. <br>";
+            $msg .= implode("<br>", $user->getFieldErrors());
+            $cookie->setValue($msg);
+            $cookie->add();
+            $user->setFieldErrors(null);
+            $this->view->redirect_to( URL. 'users/register');
         }
 
         // Get User id
         if(!$user->isSigned()){
-           $this->login();
+            $this->view->redirect_to( URL. 'users/login');
             return;
         }
 
         // Render user index account page
-        $this->index();
+        $this->view->redirect_to( URL. 'users/');
+        return;
     }
 
 
@@ -289,7 +353,23 @@ class Users  extends Controller{
      * Use to load login page
      * @Return  login view and errors if exist
      */
-    public function login($errors = null ){
+    public function login(){
+        // errors and sucess message
+        $cookie = new Cookie('userlogin');
+        $c = $cookie->getValue();
+        $msgArray = explode(":", $c);
+        $errArray = array();
+
+        if(!empty($c)){
+            if(!empty($msgArray)) {
+                if($msgArray[0]=='error'){
+                    $errArray[] = $msgArray[1];
+                    $this->view->errors = $errArray;
+                }
+            }
+        }
+        $cookie->destroy();
+
         // New user instance
         $user = new User($this->db);
         $emp = $user->isSigned();
@@ -310,6 +390,12 @@ class Users  extends Controller{
      * @Return to the user account page if success login or send error to login page
      */
     public function postLogin(){
+        $cookie = new Cookie('userlogin');
+        $c = $cookie->getValue();
+        if(!empty($c)){
+            $cookie->destroy();
+        }
+
         //Get Post
         if(!isset($_POST["musika_user_login"])){
             // where to go after song has been added
@@ -323,6 +409,11 @@ class Users  extends Controller{
 
         if(!$user->userLogin()){
             // error login send in cookie
+            $msg = "error:";
+            $msg .= implode("<br>", $user->getFieldErrors());
+            $cookie->setValue($msg);
+            $cookie->add();
+            $user->setFieldErrors(null);
             $this->view->redirect_to( URL. 'users/login');
             return;
         }else{

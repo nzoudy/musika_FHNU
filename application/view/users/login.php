@@ -2,7 +2,16 @@
     <div class="row">
         <div class="col-sm-6 col-sm-offset-3" style="">
             <h2>Login</h2>
-            <hr/>
+            <?php if(isset($errors)){ ?>
+                <div class="col-sm-12 alert-danger" style="padding: 10px;">
+                    <?php
+                    for($i=0; $i< count($errors); $i++){
+                        echo $errors[$i]."<br>";
+                    }
+                    ?>
+                </div>
+            <?php }?>
+
             <form method="post" action="<?php echo URL . 'users/postLogin' ?>" data-success="<?php echo URL ?>/users/register">
                 <input name="musika_user_login" type="hidden" value="<?php echo APPNAME; ?>">
 

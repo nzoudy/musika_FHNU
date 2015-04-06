@@ -21,6 +21,7 @@ class User extends Model {
     private $password;
     private $created;
     private $updated;
+    private $fieldErrors;
 
     // Todo: Refactor the user Table and add groupid, Refactor song table add userid
     // Todo: Remove useless user fields like : address, telephone, zipcode, country
@@ -49,7 +50,7 @@ class User extends Model {
             'regEx' => '/^([a-zA-Z0-9_])+$/'
         ),
         'Fullname' => array(
-            'limit' => '3-200',
+            'limit' => '3-250',
             'regEx' => '/^([a-zA-Z0-9_ .])+$/'
         ),
         'Password' => array(
@@ -181,6 +182,24 @@ class User extends Model {
     }
 
     /**
+     * @return mixed
+     */
+    public function getFieldErrors()
+    {
+        return $this->fieldErrors;
+    }
+
+    /**
+     * @param mixed $fieldErrors
+     */
+    public function setFieldErrors($fieldErrors)
+    {
+        $this->fieldErrors = $fieldErrors;
+    }
+
+
+
+    /**
      * Check if a user currently signed-in
      *
      * @return bool
@@ -210,6 +229,7 @@ class User extends Model {
 
         // Username doesn't exist
         if(count($getUser) != 1){
+            $this->fieldErrors[] = "Error login, Please enter correct username or password";
             return false;
         }
 
@@ -219,6 +239,7 @@ class User extends Model {
 
         // Passwords don't match
         if(strcmp($getUser[0]->password, $currentPassword) !== 0){
+            $this->fieldErrors[] = "Error login, Please enter correct username or password";
             return false;
         }
 
@@ -257,15 +278,6 @@ class User extends Model {
      */
     public function register($info, $activation = false)
     {
-        // $this->log->channel('registration'); //Index for Errors and Reports
-
-        /*
-         * Prevent a signed user from registering a new user
-         * NOTE: If a signed user needs to register a new user
-         * clone the signed user object a register the new user
-         * with the clone.
-         */
-
         if ($this->isSigned()) {
             // $this->log->error(15);
             return false;
@@ -291,6 +303,7 @@ class User extends Model {
         if($this->email){
             if(!$this->isUnique('user', $this->email, 'email', 'email')){
                 //create session log errors
+                $this->fieldErrors[] = "Email already exists";
                return false;
             }
         }
@@ -299,6 +312,7 @@ class User extends Model {
         if ($this->userName) {
             if (!$this->isUnique('user', $this->userName, 'username', 'username')) {
                 //create session log errors
+                $this->fieldErrors[] = "Username already exists";
                 return false;
             }
         }
@@ -322,11 +336,12 @@ class User extends Model {
             $this->userId = $this->getLastId('user')->id;
             // created a new session
             $this->setSigned();
-
             return true;
         }else {
+            $this->fieldErrors[] = "Registering failed";
             return false;
         }
+
     }
 
 
@@ -342,12 +357,14 @@ class User extends Model {
         // Check username
         if((strcmp($this->userName, trim($info['username'])) !== 0) &&
             (!$this->isUnique('user', $info['username'], 'username', 'username'))){
+            $this->fieldErrors[] = "Username already exists";
             return false;
         }
 
         // Check email
         if((strcmp($this->email, trim($info['email'])) !== 0) &&
-            (!$this->isUnique('user', $this->email, 'email', 'email'))){
+            (!$this->isUnique('user', trim($info['email']), 'email', 'email'))){
+            $this->fieldErrors[] = "Email already exists";
             return false;
         }
 
@@ -363,6 +380,7 @@ class User extends Model {
         if ($this->updatedUser('user', $this->userName, $this->fullName, $this->email, $this->updated, $this->userId)){
             return true;
         }else {
+            $this->fieldErrors[] = "Update failed";
             return false;
         }
 
@@ -430,18 +448,21 @@ class User extends Model {
 
         // validate UserName
         if (!$this->validateField('userName', $this->_validations['Username']['limit'], $this->_validations['Username']['regEx'] )){
-            $field_errors['Username'] = 'Error username';
+            $field_errors[] = 'Error username = '.$this->getUserName();
         };
 
         // Todo: Create validation for other fields
         // validate fullname
-//        if (!$this->validateField('fullName', $this->_validations['Fullname']['limit'], $this->_validations['Fullname']['regEx'] )){
-//            $field_errors['Fullname'] = 'Error fullname';
-//        };
+        if (!$this->validateField('fullName', $this->_validations['Fullname']['limit'], $this->_validations['Fullname']['regEx'] )){
+            $field_errors[] = 'Error fullname = '.$this->getFullName();
+        };
 
         // validate email
-        //
+        if (!$this->validateField('email', $this->_validations['Email']['limit'], $this->_validations['Email']['regEx'] )){
+            $field_errors[] = 'Error email = '. $this->getEmail();
+        };
 
+        $this->fieldErrors = $field_errors;
         return !count($field_errors) > 0;
     }
 

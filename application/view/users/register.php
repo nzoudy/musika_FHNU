@@ -3,6 +3,15 @@
     <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
             <h2>Register</h2>
+            <?php if(isset($errors)){ ?>
+                <div class="col-sm-12 alert-danger" style="padding: 10px;">
+                    <?php
+                    for($i=0; $i< count($errors); $i++){
+                        echo $errors[$i]."<br>";
+                    }
+                    ?>
+                </div>
+            <?php }?>
             <hr/>
 
             <form method="post" action="<?php echo URL . 'users/addUser/' ?>" data-success="<?php echo URL ?>/users/login">

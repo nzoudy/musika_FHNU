@@ -30,7 +30,6 @@ class Cookie {
      * @param string $value    _(optional)_ The content of the cookie
      * @param int    $lifetime _(optional)_ The lifetime in days of the cookie
      * @param string $path     _(optional)_ The URL path of the cookie
-     * @param null   $host     _(optional)_ The host for which the host belongs to
      */
     public function __construct($name, $value = null, $lifetime = 15, $path = '/')
     {
@@ -90,8 +89,7 @@ class Cookie {
                 $this->name,
                 '',
                 time() - 3600,
-                $this->path,
-                $this->host
+                $this->path
             ); //Deletes Cookie
 
         } else {
